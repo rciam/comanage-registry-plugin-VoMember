@@ -70,7 +70,6 @@ global $cm_lang, $cm_texts;
     array('url' => array('action'=>'search'),
       'id'  => 'form_search')
   );
-  print $this->Form->hidden('CoGroup.co_id', array('default' => $cur_co['Co']['id'])). "\n";
 
   $args = array();
   $args['label'] = _txt('fd.action');
@@ -79,7 +78,9 @@ global $cm_lang, $cm_texts;
   $args['aria-label'] = _txt('fd.action');
   // XXX shouldn't these fields be sanitized?
   $args['value'] = $this->action;
-  print $this->Form->hidden('Action.name', $args);
+  print $this->Form->hidden('Action.name', $args) . PHP_EOL;
+  print $this->Form->hidden('VomsMember.co_id', array('default' => $cur_co['Co']['id'])) . PHP_EOL;
+  print $this->Form->hidden('VomsMember.all', array('default' => ($vv_all) ? 1 : 0)) . PHP_EOL;
   ?>
   <fieldset>
     <legend>
@@ -96,43 +97,53 @@ global $cm_lang, $cm_texts;
         $args = array();
         $args['label'] = _txt('sh.voms_members.subjectdn');
         $args['placeholder'] = _txt('sh.voms_members.subjectdn');
-        //$args['class'] = 'mdl-textfield__input';
+        $args['required'] = false;
         $args['aria-label'] = _txt('sh.voms_members.subjectdn');
         // XXX shouldn't these fields be sanitized?
-        $args['value'] = !empty($this->request->params['named']['Search.subject']) ? $this->request->params['named']['Search.subject'] : '';
-        print $this->Form->input('Search.subject',$args);
+        $args['value'] = !empty($this->request->params['named']['search.subject']) ? $this->request->params['named']['search.subject'] : '';
+        print $this->Form->input('search.subject', $args);
 
         $args = array();
         $args['label'] = _txt('sh.voms_members.issuerdn');
         $args['placeholder'] = _txt('sh.voms_members.issuerdn');
-        //$args['class'] = 'mdl-textfield__input';
+        $args['required'] = false;
         $args['aria-label'] = _txt('sh.voms_members.issuerdn');
         // XXX shouldn't these fields be sanitized?
-        $args['value'] = !empty($this->request->params['named']['Search.isser']) ? $this->request->params['named']['Search.isser'] : '';
-        print $this->Form->input('Search.isser',$args);
+        $args['value'] = !empty($this->request->params['named']['search.issuer']) ? $this->request->params['named']['search.issuer'] : '';
+        print $this->Form->input('search.issuer',$args);
         ?>
       </div>
 
       <div class="search-field-subgroup">
         <?php
-        $formParams = array('options' => array_combine($vv_voms_list_name, $vv_voms_list_name),
-          'type'    => 'select',
-          'label'   => _txt('sh.voms_members.vomsid'),
-          'empty'   => _txt('sh.voms_members.all'),
-          'value'   => (!empty($this->request->params['named']['search.void']) ? $this->request->params['named']['search.void'] : ''));
-        print $this->Form->input('search.void', $formParams);
+        if($vv_voms_list_name === false) {
+          $args = array();
+          $args['label'] = _txt('sh.voms_members.vomsid');
+          $args['placeholder'] = _txt('sh.voms_members.vomsid');
+          $args['required'] = false;
+          $args['aria-label'] = _txt('sh.voms_members.vomsid');
+          // XXX shouldn't these fields be sanitized?
+          $args['value'] = !empty($this->request->params['named']['search.void']) ? $this->request->params['named']['search.void'] : '';
+          print $this->Form->input('search.void',$args);
+        } else {
+          $formParams = array('options' => array_combine($vv_voms_list_name, $vv_voms_list_name),
+            'type' => 'select',
+            'label' => _txt('sh.voms_members.vomsid'),
+            'empty' => _txt('sh.voms_members.all'),
+            'value' => (!empty($this->request->params['named']['search.void']) ? $this->request->params['named']['search.void'] : ''));
+          print $this->Form->input('search.void', $formParams);
+        }
         ?>
       </div>
 
       <div class="topSearchSubmit">
         <?php
         $args = array();
-        //$args['type'] = 'button';
 
         // search button (submit)
         $args['aria-label'] = _txt('op.filter');
         $args['class'] = 'submit-button spin mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect';
-        print $this->Form->submit(_txt('op.filter'),$args);
+        print $this->Form->button(_txt('op.filter'),$args);
 
         // clear button
         $args['class'] = 'clear-button spin mdl-button';

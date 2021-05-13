@@ -20,45 +20,36 @@ class VomsMembersController extends StandardController {
 
     $voms_members = isset($this->viewVars["voms_members"]) ? $this->viewVars["voms_members"] : array();
     $voms_list = array();
+    $voms_list_names = array();
 
-    if(empty($this->viewVars["voms_members"])) {
-      $u = $this->Session->read('Auth.User.username');
-      // If i have no username just reload
-      if(empty($u)) {
-        $this->reloadConfig();
-      }
-      // Fetch all the Subject DNs the user has
-      $subject_dns = $this->VomsMember->getCertificates($u, $this->cur_co["Co"]["id"]);
-      // Fetch all Entries from VomsMembers having the subject DNs the user has
-      $voms_members = $this->VomsMember->getVomsMemberships($subject_dns);
-
-      if(!empty($voms_members)) {
-        // Organize $voms_members by vo_id
-        $voms_list = Hash::combine(
-          $voms_members,
-          '{n}.VomsMember.subject',
-          '{n}.VomsMember',
-          '{n}.VomsMember.vo_id',
-      );
-      }
-    } else {
-      if(!empty($voms_members)) {
-        foreach($voms_members as $voms) {
-          $certificates = explode(VomsMembersDelimitersEnum::CertSeparate, $voms["VomsMember"]["certificate"]);
-          foreach($certificates as $cert) {
-            list($subject, $issuer) = explode(VomsMembersDelimitersEnum::DNsSeparate, $cert);
-            $voms_list[$voms["VomsMember"]["vo_id"]][] = array(
-              'subject' => $subject,
-              'issuer' => $issuer,
-            );
-          }
-        }
+    foreach($voms_members as $voms) {
+      $certificates = explode(VomsMembersDelimitersEnum::CertSeparate, $voms["VomsMember"]["certificate"]);
+      foreach($certificates as $cert) {
+        list($subject, $issuer) = explode(VomsMembersDelimitersEnum::DNsSeparate, $cert);
+        $voms_list[$voms["VomsMember"]["vo_id"]][] = array(
+          'subject' => $subject,
+          'issuer' => $issuer,
+        );
       }
     }
+
+    // Fetch VOMs names for the drop down list
     // Get all VOMS
-    $all_voms = $this->VomsMember->getAllVomsIDs();
-    if(!empty($all_voms)) {
-      $this->set('vv_voms_list_name', Hash::extract($all_voms, '{n}.VomsMember.vo_id'));
+    if($this->viewVars["vv_permissions"]["all"]
+       && $this->viewVars["vv_permissions"]["all"]) {
+      $all_voms = $this->VomsMember->getAllVomsIDs();
+      if(!empty($all_voms)) {
+        $all_voms_list = Hash::extract($all_voms, '{n}.VomsMember.vo_id');
+        sort($all_voms_list);
+        $this->set('vv_voms_list_name', $all_voms_list);
+      }
+    } elseif(isset($this->viewVars["vv_subject_dns"])){
+      $voms_members = $this->VomsMember->getAllVomsIDs($this->viewVars["vv_subject_dns"]);
+      $my_voms_list = Hash::extract($voms_members, '{n}.VomsMember.vo_id');
+      sort($my_voms_list);
+      $this->set('vv_voms_list_name', $my_voms_list);
+    } else {
+      $this->set('vv_voms_list_name', false);
     }
 
     $this->set('vv_voms_list', $voms_list);
@@ -86,6 +77,35 @@ class VomsMembersController extends StandardController {
   }
 
   /**
+   * Insert search parameters into URL for index.
+   * - postcondition: Redirect generated
+   *
+   * @since  VomsMember v1.0.0
+   */
+
+  public function search() {
+    $url['action'] = $this->request->data['Action']['name'];
+    $url['controller'] = 'voms_members';
+
+    // build a URL will all the search elements in it
+    // the resulting URL will be
+    foreach($this->data['search'] as $field => $value){
+      if(!empty($value)) {
+        $url['search.'.$field] = $value;
+      }
+    }
+
+    // XXX Put these two always last
+    $url['co'] = $this->cur_co['Co']['id'];
+    if(isset($this->request->data["VomsMember"]["all"])) {
+      $url['all'] = ($this->request->data["VomsMember"]["all"]) ? true : false;
+    }
+    // redirect the user to the url
+    $this->redirect($url, null, true);
+  }
+
+
+  /**
    * Determine the conditions for pagination of the index view, when rendered via the UI.
    *
    * @since  COmanage Registry v4.0.0
@@ -98,10 +118,39 @@ class VomsMembersController extends StandardController {
     if(empty($u)) {
       $this->reloadConfig();
     }
+
     // Fetch all the Subject DNs the user has
-    $subject_dns = $this->VomsMember->getCertificates($u, $this->cur_co["Co"]["id"]);
     $ret = array();
-    $ret['conditions']['VomsMember.subject'] = $subject_dns;
+
+    // Subject DN
+    $req_subjectdn = isset($this->request->params['named']['search.subject']) ? $this->request->params['named']['search.subject'] : "";
+    // VO Name
+    if(isset($this->request->params['named']['search.void'])) {
+      $ret['conditions']['VomsMember.vo_id'] = $this->request->params['named']['search.void'];
+    }
+    // Issuer DN
+    if(isset($this->request->params['named']['search.issuer'])) {
+      $ret['conditions']['VomsMember.issuer iLIKE'] = "%{$this->request->params['named']['search.issuer']}%";
+    }
+
+    if(isset($this->request->params["named"]["all"])
+       && $this->request->params["named"]["all"]
+       && $this->viewVars["vv_permissions"]["all"]) {
+      $ret['conditions'][] = empty($req_subjectdn)
+        ? "VomsMember.subject IS NOT NULL"
+        : "VomsMember.subject iLIKE '%{$req_subjectdn}%'";
+      $this->set('vv_all', true);
+    } else {
+      if(empty($req_subjectdn)) {
+        $subject_dns = $this->VomsMember->getCertificates($u, $this->cur_co["Co"]["id"]);
+        $ret['conditions']['VomsMember.subject iLIKE'] = "%{$subject_dns}%";
+      } else {
+        $ret['conditions']['VomsMember.subject iLIKE'] = "%{$req_subjectdn}%";
+      }
+      $this->set('vv_subject_dns', $subject_dns);
+      $this->set('vv_all', false);
+    }
+
     $ret['group'] = 'VomsMember.vo_id';
     $ret['fields'] = array(
       'VomsMember.vo_id',
@@ -150,6 +199,8 @@ class VomsMembersController extends StandardController {
 
     // Determine what operations this user can perform
     $p['index'] = ($roles['cmadmin'] || $roles['coadmin'] || $roles['couadmin'] || $roles['user']);
+    $p['search'] = ($roles['cmadmin'] || $roles['coadmin'] || $roles['couadmin'] || $roles['user']);
+    $p['all'] = ($roles['cmadmin'] || $roles['coadmin']);
 
     $this->set('vv_permissions', $p);
 

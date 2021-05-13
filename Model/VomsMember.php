@@ -9,10 +9,10 @@ class VomsMember extends AppModel {
 
   public $virtualFields = array(
     'certificate' => "string_agg(VomsMember.subject || '"
-      . VomsMembersDelimitersEnum::DNsSeparate
-      . "' || VomsMember.issuer, '"
-      . VomsMembersDelimitersEnum::CertSeparate
-      . "')"
+                    . VomsMembersDelimitersEnum::DNsSeparate
+                    . "' || VomsMember.issuer, '"
+                    . VomsMembersDelimitersEnum::CertSeparate
+                    . "')",
   );
 
 
@@ -57,42 +57,27 @@ class VomsMember extends AppModel {
   public function cmPluginMenus()
   {
     $this->log(__METHOD__ . '::@', LOG_DEBUG);
-    return array(
-      'cogroups' => array(_txt('ct.voms_members.pl') =>
-        array(
-          'controller' => "voms_members",
-          'action' => 'index',
-        ))
+    $menu_items = array();
+    $menu_items['cogroups'][_txt('ct.voms_members.pl')] = array(
+      'controller' => "voms_members",
+      'action' => 'index',
     );
+    return $menu_items;
   }
 
   /**
    * Get the entire list of VOMS
    *
+   * @param [string]   List of Subject DNs
    * @return array List of VOMS names
    */
-  public function getAllVomsIDs() {
+  public function getAllVomsIDs($subject=false) {
     $args = array();
     $args['conditions'][] = 'VomsMember.vo_id IS NOT NULL';
-    $args['fields'] = 'DISTINCT VomsMember.vo_id';
-    $args['contain'] = false;
-
-    $entries = $this->find('all', $args);
-
-    return (empty($entries)) ? array() : $entries;
-  }
-
-  /**
-   * @param array $subject_dns
-   * @return array
-   */
-  public function getVomsMemberships($subject_dns) {
-    if(empty($subject_dns)) {
-      return array();
+    if($subject !== false) {
+      $args['conditions']['VomsMember.subject'] = $subject;
     }
-
-    $args = array();
-    $args['conditions']['VomsMember.subject'] = $subject_dns;
+    $args['fields'] = 'DISTINCT VomsMember.vo_id';
     $args['contain'] = false;
 
     $entries = $this->find('all', $args);

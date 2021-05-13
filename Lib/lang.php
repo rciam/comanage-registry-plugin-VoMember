@@ -21,7 +21,7 @@
  *
  * @link          http://www.internet2.edu/comanage COmanage Project
  * @package       registry-plugin
- * @since         COmanage Registry v3.1.x
+ * @since         VomsMember v1.0.0
  * @license       Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
@@ -33,22 +33,24 @@ global $cm_lang, $cm_texts;
 
 $cm_voms_member_texts['en_US'] = array(
   //  Titles per Controller
-  'ct.voms_members.pl'   => 'VOMS External Memberships',
-  'ct.voms_members.1'    => 'VOMS External Membership',
+  'ct.voms_members.pl'                    => 'VOMS External Memberships',
+  'ct.voms_members_all.pl'                => 'VOMS External Memberships All',
+  'ct.voms_members_my.pl'                 => 'My VOMS External Memberships',
+  'ct.voms_members.1'                     => 'VOMS External Membership',
 
   // Plugin Texts
-  'pl.voms_members.cert.1'  => 'Certificate',
-  'pl.voms_members.cert.pl' => 'Certificates',
-  'pl.voms_members.cert.abbreviation' => 'Cert',
-  'pl.voms_members.subjectdn' => '<b>Subject DN:</b> %1$s',
-  'pl.voms_members.issuerdn'  => '<b>Issuer DN:</b> %1$s',
+  'pl.voms_members.cert.1'                => 'Certificate',
+  'pl.voms_members.cert.pl'               => 'Certificates',
+  'pl.voms_members.cert.abbreviation'     => 'Cert',
+  'pl.voms_members.subjectdn'             => '<b>Subject DN:</b> %1$s',
+  'pl.voms_members.issuerdn'              => '<b>Issuer DN:</b> %1$s',
 
   // Search Texts
-  'sh.voms_members.vomsid' => 'VOMs Name',
-  'sh.voms_members.subjectdn' => 'Subject DN',
-  'sh.voms_members.issuerdn' => 'Issuer DN',
-  'sh.voms_members.all' => 'ALL',
+  'sh.voms_members.vomsid'                => 'VOMs Name',
+  'sh.voms_members.subjectdn'             => 'Subject DN',
+  'sh.voms_members.issuerdn'              => 'Issuer DN',
+  'sh.voms_members.all'                   => 'ALL',
 
   // Error
-  'er.voms_members.blackhauled' => 'Session had expired',
+  'er.voms_members.blackhauled'           => 'Session had expired',
 );

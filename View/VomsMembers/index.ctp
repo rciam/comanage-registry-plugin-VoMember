@@ -57,12 +57,32 @@ print $this->element("pageTitle", $params);
 
 // Add breadcrumbs
 print $this->element("coCrumb");
-if($this->action == 'link') {
-  $this->Html->addCrumb(_txt('op.link'));
-} else {
-  $this->Html->addCrumb(_txt('ct.voms_members.pl'));
-}
+$this->Html->addCrumb(_txt('ct.voms_members.pl'));
+
+// Add top links
+$params['topLinks'] = array();
+
 ?>
+<?php if($vv_permissions['all']): ?>
+<div id="sorter" class="listControl">
+  <ul>
+    <li class="spin">
+      <?php
+      print $this->Html->link(
+        ($vv_all) ? _txt('ct.voms_members_my.pl') : _txt('ct.voms_members_all.pl'),
+        array(
+          'controller' => 'voms_members',
+          'action' => 'index',
+          'co' => $this->params['named']['co'],
+          'all' => ($vv_all) ? false : true,
+        ),
+        array('class' => 'notebutton')
+      );
+      ?>
+    </li>
+  </ul>
+</div>
+<?php endif; ?>
 
 <div id="voms_toggle" class="listControl">
   <?php print _txt('fd.toggle.all'); ?>:
@@ -72,10 +92,12 @@ if($this->action == 'link') {
   </ul>
 </div>
 <?php
-// Load the top search form
-$fileLocation = LOCAL . DS . 'Plugin' . DS . 'VomsMember' . DS . "View/VomsMembers/search.inc";
-if(file_exists($fileLocation)) {
-  include($fileLocation);
+if($vv_permissions['search']) {
+  // Load the top search form
+  $fileLocation = LOCAL . DS . 'Plugin' . DS . 'VomsMember' . DS . "View/VomsMembers/search.inc";
+  if(file_exists($fileLocation)) {
+    include($fileLocation);
+  }
 }
 ?>
 <div id="voms_members_list" class="population-index">
