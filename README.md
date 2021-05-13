@@ -1,0 +1,1 @@
+# comanage-registry-plugin-VomsMember
