@@ -91,7 +91,7 @@ class VomsMembersController extends StandardController {
     // the resulting URL will be
     foreach($this->data['search'] as $field => $value){
       if(!empty($value)) {
-        $url['search.'.$field] = $value;
+        $url['search.'.$field] = urlParamEncode($value);
       }
     }
 
@@ -123,14 +123,15 @@ class VomsMembersController extends StandardController {
     $ret = array();
 
     // Subject DN
-    $req_subjectdn = isset($this->request->params['named']['search.subject']) ? $this->request->params['named']['search.subject'] : "";
+    $req_subjectdn = isset($this->request->params['named']['search.subject']) ? urlParamDecode($this->request->params['named']['search.subject']) : "";
     // VO Name
     if(isset($this->request->params['named']['search.void'])) {
-      $ret['conditions']['VomsMember.vo_id'] = $this->request->params['named']['search.void'];
+      $ret['conditions']['VomsMember.vo_id'] = urlParamDecode($this->request->params['named']['search.void']);
     }
     // Issuer DN
     if(isset($this->request->params['named']['search.issuer'])) {
-      $ret['conditions']['VomsMember.issuer iLIKE'] = "%{$this->request->params['named']['search.issuer']}%";
+      $issuer = urlParamDecode($this->request->params['named']['search.issuer']);
+      $ret['conditions']['VomsMember.issuer iLIKE'] = "%{$issuer}%";
     }
 
     if(isset($this->request->params["named"]["all"])

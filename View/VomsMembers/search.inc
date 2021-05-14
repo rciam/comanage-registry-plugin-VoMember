@@ -21,7 +21,7 @@
  *
  * @link          http://www.internet2.edu/comanage COmanage Project
  * @package       registry
- * @since         COmanage Registry v0.8.3
+ * @since         Voms Member v1.0.0
  * @license       Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
@@ -100,7 +100,7 @@ global $cm_lang, $cm_texts;
         $args['required'] = false;
         $args['aria-label'] = _txt('sh.voms_members.subjectdn');
         // XXX shouldn't these fields be sanitized?
-        $args['value'] = !empty($this->request->params['named']['search.subject']) ? $this->request->params['named']['search.subject'] : '';
+        $args['value'] = !empty($this->request->params['named']['search.subject']) ? urlParamDecode($this->request->params['named']['search.subject']) : '';
         print $this->Form->input('search.subject', $args);
 
         $args = array();
@@ -109,7 +109,7 @@ global $cm_lang, $cm_texts;
         $args['required'] = false;
         $args['aria-label'] = _txt('sh.voms_members.issuerdn');
         // XXX shouldn't these fields be sanitized?
-        $args['value'] = !empty($this->request->params['named']['search.issuer']) ? $this->request->params['named']['search.issuer'] : '';
+        $args['value'] = !empty($this->request->params['named']['search.issuer']) ? urlParamDecode($this->request->params['named']['search.issuer']) : '';
         print $this->Form->input('search.issuer',$args);
         ?>
       </div>
@@ -123,14 +123,14 @@ global $cm_lang, $cm_texts;
           $args['required'] = false;
           $args['aria-label'] = _txt('sh.voms_members.vomsid');
           // XXX shouldn't these fields be sanitized?
-          $args['value'] = !empty($this->request->params['named']['search.void']) ? $this->request->params['named']['search.void'] : '';
+          $args['value'] = !empty($this->request->params['named']['search.void']) ? urlParamDecode($this->request->params['named']['search.void']) : '';
           print $this->Form->input('search.void',$args);
         } else {
           $formParams = array('options' => array_combine($vv_voms_list_name, $vv_voms_list_name),
             'type' => 'select',
             'label' => _txt('sh.voms_members.vomsid'),
             'empty' => _txt('sh.voms_members.all'),
-            'value' => (!empty($this->request->params['named']['search.void']) ? $this->request->params['named']['search.void'] : ''));
+            'value' => (!empty($this->request->params['named']['search.void']) ? urlParamDecode($this->request->params['named']['search.void']) : ''));
           print $this->Form->input('search.void', $formParams);
         }
         ?>
