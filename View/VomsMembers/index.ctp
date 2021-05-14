@@ -255,20 +255,15 @@ if($vv_permissions['search']) {
     <?php $i++; ?>
   <?php endforeach; // $co_people ?>
 
-<!--  --><?php
-//  if(empty($co_people)) {
-//    // No search results, or there are no people in this CO
-//    print('<div id="noResults">' . _txt('rs.search.none') . '</div>');
-//    print('<div id="restoreLink">');
-//    $args = array();
-//    $args['plugin'] = null;
-//    $args['controller'] = 'co_people';
-//    $args['action'] = 'index';
-//    $args['co'] = $cur_co['Co']['id'];
-//    print $this->Html->link(_txt('op.search.restore'), $args);
-//    print('</div>');
-//  }
-//  ?>
+
+  <?php
+  if(empty($vv_voms_list)) {
+    // No search results, or there are no people in this CO
+    print('<div id="noResults">' . _txt('rs.search.none') . '</div>');
+    print('<div id="restoreLink">');
+    print('</div>');
+  }
+  ?>
 
   <?php print $this->element("pagination"); ?>
   <div class="clearfix"></div>
