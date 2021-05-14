@@ -144,7 +144,7 @@ class VomsMembersController extends StandardController {
     } else {
       if(empty($req_subjectdn)) {
         $subject_dns = $this->VomsMember->getCertificates($u, $this->cur_co["Co"]["id"]);
-        $ret['conditions']['VomsMember.subject iLIKE'] = "%{$subject_dns}%";
+        $ret['conditions']['VomsMember.subject'] = $subject_dns;
       } else {
         $ret['conditions']['VomsMember.subject iLIKE'] = "%{$req_subjectdn}%";
       }

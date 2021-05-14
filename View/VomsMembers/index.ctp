@@ -52,7 +52,9 @@
 // Load CSS and JS Libraries
 print $this->Html->css('/VomsMember/css/voms_members');
 
-$params = array('title' => _txt('ct.voms_members.pl', array($cur_co['Co']['name'])));
+// Construct and load Page title
+$title = ($vv_all) ? _txt('ct.voms_members_all.pl') : _txt('ct.voms_members_my.pl');
+$params = array('title' => $title);
 print $this->element("pageTitle", $params);
 
 // Add breadcrumbs
