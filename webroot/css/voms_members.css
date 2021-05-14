@@ -1,5 +1,120 @@
-.voms-members-searh{
-  border-bottom: 0.5em solid #186696;
+.population-index {
+  clear: both;
+}
+.population-index > .co-person {
+  margin: 0;
+  padding: 0;
+  border-bottom: 2px solid #fff;
+  clear: both;
+}
+.population-index > div > .person-panel {
+  box-sizing: border-box; /* essential */
+  margin: 0;
+  min-height: 45px;
+  position: relative;
+  width: 100%;
+}
+.population-index .ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+  /* override jquery default icon positioning */
+  float: left;
+  margin: 0 0.5em 0 0;
+  top: 6px;
+}
+.population-index .ui-accordion .ui-accordion-content {
+  padding: 0;
+}
+.population-index .person-info {
+  float: left;
+  margin-top: 6px;
+}
+.population-index .person-name {
+}
+.population-index .nameWithoutEmail {
+}
+.population-index .person-email {
+  color: #666;
+}
+.population-index .person-status {
+  display: block;
+  font-style: italic;
+}
+.population-index .person-admin {
+  float: right;
+  text-align: right;
+  margin-top: 0.3em;
+}
+.population-index .person-admin button {
+  display: block;
+}
+.population-index .role-panel {
+  margin-left: 25px;
+  clear: both;
+  position: relative;
+  overflow: visible;
+}
+.population-index .roles-title {
+  position: absolute;
+  bottom: 10px;
+  transform: rotate(-90deg);
+  z-index: 1;
+  left: -29px;
+  font-size: 0.9em;
+  color: #bbb;
+  text-transform: lowercase;
+}
+.population-index .role {
+  padding: 2px 4px;
+}
+.population-index .role:first-child {
+  padding-top: 4px;
+}
+.population-index .role:last-child {
+  padding-bottom: 4px;
+}
+.population-index .role:nth-child(even) {
+  background-color: #f5f5f5;
+}
+.population-index .roleinfo {
+  margin: 4px 0;
+}
+.population-index .rolestatus {
+  margin: 0;
+  font-style: italic;
+  background-color: #666;
+  color: white;
+  padding: 4px;
+}
+.population-index .roledata {
+  width: 100%;
+}
+.population-index .roletitle {
+  width:100%;
+}
+.population-index .roleTitleLinks {
+  margin: 0 4px 0;
+  float: left;
+}
+.population-index .roledates {
+  text-align: right;
+  margin: 0 30px 0 0;
+}
+/* people index jquery ui overrides */
+.population-index .person-panel {
+  border: 1px solid transparent; /* to allow our jquery UI hovers not to change the size of the div */
+  background: inherit;
+  color: #333;
+}
+
+
+
+#voms-name-header{
+  background: #186696;
+  padding-left: 0.5em;
+  font-size: 1.8em;
+  line-height: 2.2em;
+  color: white;
+  font-weight: bolder;
+  /*border-bottom: 0.5em solid #186696;*/
 }
 .listControl a {
   background: unset;
@@ -9,4 +124,42 @@
   background: unset;
   border: unset;
   color: #333;
+}
+.filter-textbox {
+  position: relative;
+  margin-right: 1em;
+}
+.filter-textbox label {
+  position: absolute;
+  top: 0.15em;
+}
+.filter-textbox label#filter-icon {
+  left: 0.5em;
+}
+.filter-textbox label#x-icon {
+  right: 0.4em;
+}
+.filter-textbox input {
+  padding-left: 1.2em;
+  border-radius: 0.5em;
+}
+.filter-textbox .fa::before {
+  color: #555;
+}
+.filter-textbox.hidden {
+  visibility: hidden;
+}
+
+@media only screen and (min-width: 360px) {
+  .population-index .person-admin {
+    float: left;
+    clear: both;
+  }
+}
+
+@media only screen and (min-width: 576px) {
+  .population-index .person-admin {
+    float: right;
+    clear: unset;
+  }
 }

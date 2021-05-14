@@ -27,7 +27,88 @@
 ?>
 
 <script>
+  // Observers list
+  var accordion_observer = new Array();
+  // var filterbox_observer = new Array();
+
+  // Options for the Dropdown Action Menu Observer
+  const cmVomsAccordionOptions = {
+    attributes: true,
+    attributeFilter: ['class']
+  };
+
+  function observeFilterVisibility(element, target_element_class, modify_class) {
+    accordion_observer[element] = new MutationObserver((mutationList) => { // Use traditional 'for loops' for IE 11
+      for(const mutation of mutationList) {
+        if (mutation.type === 'attributes') {
+          curr_elem = mutation.target;
+          elem_children = mutation.target.childNodes;
+          $filter_box = $(elem_children).find('.filter-textbox');
+          if($(curr_elem).hasClass('ui-state-active')) {
+            $filter_box.removeClass(modify_class);
+          } else {
+            $filter_box.addClass(modify_class);
+          }
+        }
+      }
+    });
+    accordion_observer[element].observe(element,cmVomsAccordionOptions);
+  }
+
+
+  // https://stackoverflow.com/questions/32383349/detect-value-change-in-input-tag-with-vanilla-javascript-and-mutationobserver
+  function observeFilterText(element, property, callback, delay = 0) {
+    let elementPrototype = Object.getPrototypeOf(element);
+    if (elementPrototype.hasOwnProperty(property)) {
+      let descriptor = Object.getOwnPropertyDescriptor(elementPrototype, property);
+      Object.defineProperty(element, property, {
+        get: function() {
+          return descriptor.get.apply(this, arguments);
+        },
+        set: function () {
+          let oldValue = this[property];
+          descriptor.set.apply(this, arguments);
+          let newValue = this[property];
+          if (typeof callback == "function") {
+            setTimeout(callback.bind(this, oldValue, newValue), delay);
+          }
+          return newValue;
+        }
+      });
+    }
+  }
+
+  // Reset the text
+  function filter_reset(elem) {
+    $filter_box = $(elem).siblings('.cert-filter');
+    $filter_box.val("");
+    $filter_box.trigger("keyup");
+  }
+
   $(function() {
+
+    // Handle Accordion - Filter-textbox toggle
+    $('.co-person .person-panel').each( (key, elem) => {
+      // Add observer for open/close accordion
+      observeFilterVisibility(elem, 'filter-textbox', 'hidden');
+      // Add event listener fot text read
+      $filter_box_elem = $(elem).find('.cert-filter');
+      $filter_box_elem.on("keyup", function () {
+        let value = this.value.toLowerCase();
+        $roles = $(this).closest('.co-person').find('.roles').children();
+        $roles.each(function(index) {
+          let $role = $(this);
+          let text_payload = $role.text().toLowerCase();
+          if(text_payload.includes(value)) {
+            // debugger;
+            $role.show();
+          } else {
+            // debugger;
+            $role.hide();
+          }
+        });
+      });
+    });
 
     $( ".co-person" ).accordion({
       collapsible: true,
@@ -36,14 +117,15 @@
     });
 
     $("#clearSearchButton").button();
-
   });
 
   function toggleVomsList(state) {
     if (state == 'open') {
       $(".co-person" ).accordion( "option", "active", 0 );
+      $(".filter-textbox").css("visibility", "visible");
     } else {
       $(".co-person" ).accordion( "option", "active", false );
+      $(".filter-textbox").css("visibility", "hidden");
     }
   }
 </script>
@@ -102,6 +184,9 @@ if($vv_permissions['search']) {
   }
 }
 ?>
+<div id="voms-name-header" class="listControl" aria-label="<?php print _txt('ct.voms_members.vo_name'); ?>">
+  <?php print _txt('ct.voms_members.vo_name'); ?>
+</div>
 <div id="voms_members_list" class="population-index">
   <?php $i = 0; ?>
   <?php foreach ($vv_voms_list as $vo_name => $certs): ?>
@@ -114,17 +199,23 @@ if($vv_permissions['search']) {
               print $vo_name
               ?>
             </span>
-
             <span class="person-email">
               <?php
                 print '( #' . count($certs) . ' )';
               ?>
             </span>
           </div>
-
         </div>
-
-        <div class="person-admin"></div>
+        <div class="person-admin">
+          <?php
+          if($vv_all) {
+            $filter_cfg = array(
+              'vv_id' => $vo_name . $i . "filterbox",
+            );
+            print $this->element('VomsMember.filterTxtBox', $filter_cfg);
+          }
+          ?>
+        </div>
         <span class="clearfix"></span>
       </div>
       <div class = "role-panel">
