@@ -9,7 +9,7 @@ class VomsMember extends AppModel {
 
   public $virtualFields = array(
     'certificate' => "string_agg(VomsMember.subject || '"
-                    . VomsMembersDelimitersEnum::DNsSeparate
+                    . VomsMembersDelimitersEnum::DNSeparate
                     . "' || VomsMember.issuer, '"
                     . VomsMembersDelimitersEnum::CertSeparate
                     . "')",
