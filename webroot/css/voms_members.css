@@ -149,6 +149,9 @@
 .filter-textbox.hidden {
   visibility: hidden;
 }
+mark {
+  background: #f5f5bb;
+}
 
 @media only screen and (min-width: 360px) {
   .population-index .person-admin {

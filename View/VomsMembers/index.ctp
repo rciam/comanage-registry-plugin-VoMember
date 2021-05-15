@@ -81,8 +81,8 @@
   // Reset the text
   function filter_reset(elem) {
     $filter_box = $(elem).siblings('.cert-filter');
-    $filter_box.val("");
-    $filter_box.trigger("keyup");
+    $filter_box.val("").focus();
+    $filter_box.trigger("input");
   }
 
   $(function() {
@@ -93,17 +93,21 @@
       observeFilterVisibility(elem, 'filter-textbox', 'hidden');
       // Add event listener fot text read
       $filter_box_elem = $(elem).find('.cert-filter');
-      $filter_box_elem.on("keyup", function () {
+      $filter_box_elem.on("input", function () {
         let value = this.value.toLowerCase();
         $roles = $(this).closest('.co-person').find('.roles').children();
         $roles.each(function(index) {
           let $role = $(this);
           let text_payload = $role.text().toLowerCase();
           if(text_payload.includes(value)) {
-            // debugger;
+            // Highlight the found letter combinations
+            $role.unmark({
+              done: function() {
+                $role.mark(value);
+              }
+            });
             $role.show();
           } else {
-            // debugger;
             $role.hide();
           }
         });
@@ -132,7 +136,9 @@
 
 <?php
 // Load CSS and JS Libraries
-print $this->Html->css('/VomsMember/css/voms_members');
+print $this->Html->css('/VomsMember/css/voms_members', array('inline' => false));
+// Highlight library
+print $this->Html->script('https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.0/jquery.mark.js', array('inline' => false));
 
 // Construct and load Page title
 $title = ($vv_all) ? _txt('ct.voms_members_all.pl') : _txt('ct.voms_members_my.pl');
