@@ -230,11 +230,21 @@ if($vv_permissions['search']) {
           <?php
           foreach ($certs as $cert) {
             print '<div class = "role">';
-            // Print Status
-            if(!empty($cert['created']) ) {
+            // Print Linked CO Person
+            if(!empty($cert['people']) ) {
               print '<div class = "rolestatus">';
-              $created = $this->Time->format($cert['created'], "%F", false, $vv_tz);
-              print $created;
+              $plist = array();
+              foreach($cert['people'] as $person) {
+                $plist[] = $this->Html->link(
+                  $person['given'] . ' ' .$person['family'],
+                  array('controller' => 'co_people',
+                    'plugin' => null,
+                    'action' => 'canvas',
+                    $person['pid']
+                  )
+                );
+              }
+              print $this->Html->nestedList($plist);
               print '</div>';
             }
             print '<div class = "roleinfo">';
