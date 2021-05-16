@@ -210,6 +210,13 @@ if($vv_permissions['search']) {
                 print '( #' . count($certs) . ' )';
               ?>
             </span>
+            <?php
+            if( isset($vv_cous[$vo_name]) ) {
+              print '<span class="person-status">';
+              print _txt('pl.voms_members.inregistry');
+              print '</span>';
+            }
+            ?>
           </div>
         </div>
         <div class="person-admin">

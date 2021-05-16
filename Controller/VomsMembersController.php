@@ -53,6 +53,11 @@ class VomsMembersController extends StandardController {
     }
 
     $this->set('vv_voms_list', $voms_list);
+
+    // COU list
+    $cou_list = $this->VomsMember->allCous($this->cur_co["Co"]["id"],'names');
+
+    $this->set('vv_cous', (!empty($cou_list)) ? array_combine($cou_list, $cou_list) : array() );
   }
 
   /**

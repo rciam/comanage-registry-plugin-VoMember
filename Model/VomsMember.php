@@ -86,6 +86,39 @@ class VomsMember extends AppModel {
   }
 
   /**
+   * Obtain all COUs within a specified CO.
+   *
+   * @param  integer CO ID
+   * @param  string Format, one of "names", "ids", or "hash" of id => name
+   * @return Array List or hash of member COUs, as specified by $format
+   */
+
+  public function allCous($coId, $format="hash") {
+    $args['conditions']['Cou.co_id'] = $coId;
+    $args['order'] = 'Cou.name ASC';
+    $args['contain'] = false;
+
+    $this->Cou = ClassRegistry::init('Cou');
+    $cous = $this->Cou->find("list", $args);
+
+    if($cous) {
+      switch($format) {
+        case 'names':
+          return(array_values($cous));
+          break;
+        case 'ids':
+          return(array_keys($cous));
+          break;
+        default:
+          return($cous);
+          break;
+      }
+    }
+
+    return(array());
+  }
+
+  /**
    * Get all the Certificates linked under all OrgIdentities of the user
    *
    * @param string  $username     User's username stored in the Session

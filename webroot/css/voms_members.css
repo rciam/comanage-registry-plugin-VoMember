@@ -1,58 +1,67 @@
-.population-index {
+#voms_members_list {
   clear: both;
 }
-.population-index > .co-person {
+#voms_members_list > .co-person {
   margin: 0;
   padding: 0;
   border-bottom: 2px solid #fff;
   clear: both;
 }
-.population-index > div > .person-panel {
+#voms_members_list > div > .person-panel {
   box-sizing: border-box; /* essential */
   margin: 0;
   min-height: 45px;
   position: relative;
   width: 100%;
 }
-.population-index .ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+#voms_members_list .ui-accordion .ui-accordion-header .ui-accordion-header-icon {
   /* override jquery default icon positioning */
   float: left;
   margin: 0 0.5em 0 0;
   top: 6px;
 }
-.population-index .ui-accordion .ui-accordion-content {
+#voms_members_list .ui-accordion .ui-accordion-content {
   padding: 0;
 }
-.population-index .person-info {
+#voms_members_list .person-info {
   float: left;
   margin-top: 6px;
+  margin-bottom: 0.5em;
+  width:70%;
 }
-.population-index .person-name {
+#voms_members_list .person-info-inner {
+  width: inherit;
 }
-.population-index .nameWithoutEmail {
+#voms_members_list .person-name {
 }
-.population-index .person-email {
+#voms_members_list .nameWithoutEmail {
+}
+#voms_members_list .person-email {
   color: #666;
 }
-.population-index .person-status {
-  display: block;
+#voms_members_list .person-status {
   font-style: italic;
+  background: #186696;
+  padding: 0.3em;
+  border-radius: 0.5em;
+  color: white;
+  float: right;
 }
-.population-index .person-admin {
+#voms_members_list .person-admin {
   float: right;
   text-align: right;
   margin-top: 0.3em;
 }
-.population-index .person-admin button {
+#voms_members_list .person-admin button {
   display: block;
 }
-.population-index .role-panel {
+#voms_members_list .role-panel {
   margin-left: 25px;
   clear: both;
   position: relative;
   overflow: visible;
 }
-.population-index .roles-title {
+#voms_members_list .roles-title {
   position: absolute;
   bottom: 10px;
   transform: rotate(-90deg);
@@ -62,24 +71,24 @@
   color: #bbb;
   text-transform: lowercase;
 }
-.population-index .role {
+#voms_members_list .role {
   padding: 2px 4px;
 }
-.population-index .role:first-child {
+#voms_members_list .role:first-child {
   padding-top: 4px;
 }
-.population-index .role:last-child {
+#voms_members_list .role:last-child {
   padding-bottom: 4px;
 }
-.population-index .role:nth-child(even) {
+#voms_members_list .role:nth-child(even) {
   background-color: #f5f5f5;
 }
-.population-index .roleinfo {
+#voms_members_list .roleinfo {
   grid-area: roleinfo;
   height: 100%;
   margin: 4px 0;
 }
-.population-index .rolestatus {
+#voms_members_list .rolestatus {
   grid-area: rolestatus;
   height: 100%;
   margin: 0;
@@ -87,25 +96,25 @@
   color: initial;
   padding: 4px;
 }
-.population-index .rolestatus a {
+#voms_members_list .rolestatus a {
   color: #07b;
 }
-.population-index .roledata {
+#voms_members_list .roledata {
   width: 100%;
 }
-.population-index .roletitle {
+#voms_members_list .roletitle {
   width:100%;
 }
-.population-index .roleTitleLinks {
+#voms_members_list .roleTitleLinks {
   margin: 0 4px 0;
   float: left;
 }
-.population-index .roledates {
+#voms_members_list .roledates {
   text-align: right;
   margin: 0 30px 0 0;
 }
 /* people index jquery ui overrides */
-.population-index .person-panel {
+#voms_members_list .person-panel {
   border: 1px solid transparent; /* to allow our jquery UI hovers not to change the size of the div */
   background: inherit;
   color: #333;
@@ -160,18 +169,18 @@ mark {
 }
 
 @media only screen and (min-width: 360px) {
-  .population-index .person-admin {
+  #voms_members_list .person-admin {
     float: left;
     clear: both;
   }
 }
 
 @media only screen and (min-width: 576px) {
-  .population-index .person-admin {
+  #voms_members_list .person-admin {
     float: right;
     clear: unset;
   }
-  .population-index .role {
+  #voms_members_list .role {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: unset;

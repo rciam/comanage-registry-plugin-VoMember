@@ -45,6 +45,7 @@ $cm_voms_member_texts['en_US'] = array(
   'pl.voms_members.cert.abbreviation'     => 'Cert',
   'pl.voms_members.subjectdn'             => '<b>Subject DN:</b> %1$s',
   'pl.voms_members.issuerdn'              => '<b>Issuer DN:</b> %1$s',
+  'pl.voms_members.inregistry'            => 'In Registry',
 
   // Search Texts
   'sh.voms_members.vomsid'                => 'VOMs Name',
