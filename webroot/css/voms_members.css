@@ -85,6 +85,8 @@
 }
 #voms_members_list .roleinfo {
   grid-area: roleinfo;
+  display: flex;
+  align-items: center;
   height: 100%;
   margin: 4px 0;
 }
