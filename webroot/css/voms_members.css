@@ -96,6 +96,19 @@
   color: initial;
   padding: 4px;
 }
+#voms_members_list .rolestatus .found::after{
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  -moz-border-radius: 7.5px;
+  -webkit-border-radius: 7.5px;
+  border-radius: 7.5px;
+  background-color: #69b6d5;
+  margin-left: 0.5em;
+  padding-top: 0;
+  vertical-align: middle;
+}
 #voms_members_list .rolestatus a {
   color: #07b;
 }

@@ -238,17 +238,26 @@ if($vv_permissions['search']) {
           foreach ($certs as $cert) {
             print '<div class = "role">';
             // Print Linked CO Person
-            if(!empty($cert['people']) ) {
+            if(!empty($vv_cert_mlist) && !empty($vv_cert_mlist[ $cert["subject"] ]) ) {
               print '<div class = "rolestatus">';
               $plist = array();
-              foreach($cert['people'] as $person) {
+              foreach($vv_cert_mlist[ $cert["subject"] ]['person'] as $person) {
+                $found_role_key = false;
+                if(!empty($vv_cert_mlist[ $cert["subject"] ]['roles'])) {
+                  $roles_list = Hash::flatten($vv_cert_mlist[ $cert["subject"] ]['roles']);
+                  $found_role_key = array_search($vo_name, $roles_list, true);
+                }
+                if ($found_role_key !== false) {
+                  $t=1;
+                }
                 $plist[] = $this->Html->link(
-                  $person['given'] . ' ' .$person['family'],
+                  $person['primary'],
                   array('controller' => 'co_people',
                     'plugin' => null,
                     'action' => 'canvas',
-                    $person['pid']
-                  )
+                    $person['id']
+                  ),
+                  array('class' => ($found_role_key !== false) ? 'found' : 'notfound')
                 );
               }
               print $this->Html->nestedList($plist);
