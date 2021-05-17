@@ -9,6 +9,14 @@ class VomsMembersController extends StandardController {
     'VomsMember.VomsMember'
   );
 
+  // Establish pagination parameters for HTML views
+  public $paginate = array(
+    'limit' => 25,
+    'order' => array(
+      'VomsMember.vo_id' => 'asc'
+    )
+  );
+
   /**
    * Callback after controller methods are invoked but before views are rendered.
    *
