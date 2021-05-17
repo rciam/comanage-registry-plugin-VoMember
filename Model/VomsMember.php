@@ -70,7 +70,7 @@ class VomsMember extends AppModel {
   {
     $this->log(__METHOD__ . '::@', LOG_DEBUG);
     $menu_items = array();
-    $menu_items['cogroups'][_txt('ct.voms_members.generic.pl')] = array(
+    $menu_items['cogroups'][_txt('ct.voms_members.pl')] = array(
       'controller' => "voms_members",
       'action' => 'index',
     );
@@ -87,7 +87,7 @@ class VomsMember extends AppModel {
   {
     $action_list[] = array(
       'icon'    => 'note',
-      'title'   => _txt('ct.voms_members.generic.pl'),
+      'title'   => _txt('ct.voms_members.pl'),
       'url'     => array(
         'controller' => 'voms_members',
         'action'     => 'index'

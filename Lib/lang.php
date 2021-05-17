@@ -33,11 +33,10 @@ global $cm_lang, $cm_texts;
 
 $cm_voms_member_texts['en_US'] = array(
   //  Titles per Controller
-  'ct.voms_members.pl'                    => 'VOMS External Memberships',
-  'ct.voms_members.generic.pl'            => 'External Memberships',
-  'ct.voms_members_all.pl'                => 'All VOMS External Memberships',
-  'ct.voms_members_my.pl'                 => 'My VOMS External Memberships',
-  'ct.voms_members.1'                     => 'VOMS External Membership',
+  'ct.voms_members.pl'                    => 'External Memberships',
+  'ct.voms_members_all.pl'                => 'All External Memberships',
+  'ct.voms_members_my.pl'                 => 'My External Memberships',
+  'ct.voms_members.1'                     => 'External Membership',
   'ct.voms_members.vo_name'               => 'VOMS Name',
 
   // Plugin Texts
