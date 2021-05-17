@@ -251,7 +251,7 @@ if($vv_permissions['search']) {
                   $t=1;
                 }
                 $plist[] = $this->Html->link(
-                  $person['primary'],
+                  $person['primary'] . "(" . $person['id'] . ")",
                   array('controller' => 'co_people',
                     'plugin' => null,
                     'action' => 'canvas',
