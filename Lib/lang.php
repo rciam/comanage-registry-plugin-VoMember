@@ -34,6 +34,7 @@ global $cm_lang, $cm_texts;
 $cm_voms_member_texts['en_US'] = array(
   //  Titles per Controller
   'ct.voms_members.pl'                    => 'VOMS External Memberships',
+  'ct.voms_members.generic.pl'            => 'External Memberships',
   'ct.voms_members_all.pl'                => 'All VOMS External Memberships',
   'ct.voms_members_my.pl'                 => 'My VOMS External Memberships',
   'ct.voms_members.1'                     => 'VOMS External Membership',

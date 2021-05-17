@@ -70,11 +70,31 @@ class VomsMember extends AppModel {
   {
     $this->log(__METHOD__ . '::@', LOG_DEBUG);
     $menu_items = array();
-    $menu_items['cogroups'][_txt('ct.voms_members.pl')] = array(
+    $menu_items['cogroups'][_txt('ct.voms_members.generic.pl')] = array(
       'controller' => "voms_members",
       'action' => 'index',
     );
     return $menu_items;
+  }
+
+  /**
+   * Expose sidebar menu items.
+   *
+   * @ return Array with menu location type as key and array of labels, controllers, actions as values.
+   */
+
+  public function cmPluginSidebar()
+  {
+    $action_list[] = array(
+      'icon'    => 'note',
+      'title'   => _txt('ct.voms_members.generic.pl'),
+      'url'     => array(
+        'controller' => 'voms_members',
+        'action'     => 'index'
+      )
+    );
+
+    return $action_list;
   }
 
   /**
