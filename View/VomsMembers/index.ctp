@@ -190,8 +190,8 @@ if($vv_permissions['search']) {
   }
 }
 ?>
-<div id="voms-name-header" class="listControl" aria-label="<?php print _txt('ct.voms_members.vo_name'); ?>">
-  <?php print _txt('ct.voms_members.vo_name'); ?>
+<div id="voms-name-header" class="listControl" aria-label="<?php print _txt('ct.voms_members.vo'); ?>">
+  <?php print _txt('ct.voms_members.vo'); ?>
 </div>
 <div id="voms_members_list" class="population-index">
   <?php $i = 0; ?>

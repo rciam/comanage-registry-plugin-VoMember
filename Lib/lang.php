@@ -33,11 +33,11 @@ global $cm_lang, $cm_texts;
 
 $cm_voms_member_texts['en_US'] = array(
   //  Titles per Controller
-  'ct.voms_members.pl'                    => 'External Memberships',
-  'ct.voms_members_all.pl'                => 'All External Memberships',
-  'ct.voms_members_my.pl'                 => 'My External Memberships',
-  'ct.voms_members.1'                     => 'External Membership',
-  'ct.voms_members.vo_name'               => 'VOMS Name',
+  'ct.voms_members.pl'                    => 'External VO Memberships',
+  'ct.voms_members_all.pl'                => 'All External VO Memberships',
+  'ct.voms_members_my.pl'                 => 'My External VO Memberships',
+  'ct.voms_members.1'                     => 'External VO Membership',
+  'ct.voms_members.vo'                    => 'Virtual Organization',
 
   // Plugin Texts
   'pl.voms_members.cert.1'                => 'Certificate',
@@ -48,7 +48,7 @@ $cm_voms_member_texts['en_US'] = array(
   'pl.voms_members.inregistry'            => 'In Registry',
 
   // Search Texts
-  'sh.voms_members.vomsid'                => 'VOMs Name',
+  'sh.voms_members.vo_id'                 => 'VO Name',
   'sh.voms_members.subjectdn'             => 'Subject DN',
   'sh.voms_members.issuerdn'              => 'Issuer DN',
   'sh.voms_members.all'                   => 'ALL',
