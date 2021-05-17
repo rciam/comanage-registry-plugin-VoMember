@@ -92,7 +92,6 @@
 }
 #voms_members_list .rolestatus {
   grid-area: rolestatus;
-  height: 100%;
   margin: 0;
   background-color: inherit;
   color: initial;
