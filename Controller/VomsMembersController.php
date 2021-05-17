@@ -23,9 +23,9 @@ class VomsMembersController extends StandardController {
     $voms_list_names = array();
 
     foreach($voms_members as $voms) {
-      $certificates = explode(VomsMembersDelimitersEnum::CertSeparate, $voms["VomsMember"]["certificate"]);
+      $certificates = explode(VomsMembersDelimitersEnum::LineSeperate, $voms["VomsMember"]["certificate"]);
       foreach($certificates as $cert) {
-        list($subject, $issuer) = explode(VomsMembersDelimitersEnum::DNSeparate, $cert);
+        list($subject, $issuer) = explode(VomsMembersDelimitersEnum::ValueSeparate, $cert);
         $voms_list[$voms["VomsMember"]["vo_id"]][] = array(
           'subject' => $subject,
           'issuer' => $issuer,
@@ -56,8 +56,11 @@ class VomsMembersController extends StandardController {
 
     // COU list
     $cou_list = $this->VomsMember->allCous($this->cur_co["Co"]["id"],'names');
-
     $this->set('vv_cous', (!empty($cou_list)) ? array_combine($cou_list, $cou_list) : array() );
+
+    // Mapped Cert list
+    $cert_list = $this->VomsMember->getCertMapToPersonRole($this->cur_co["Co"]["id"]);
+    $this->set('vv_cert_mlist', $cert_list);
   }
 
   /**

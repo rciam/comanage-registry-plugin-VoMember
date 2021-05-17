@@ -9,12 +9,24 @@ class VomsMember extends AppModel {
 
   public $virtualFields = array(
     'certificate' => "string_agg(VomsMember.subject || '"
-                    . VomsMembersDelimitersEnum::DNSeparate
+                    . VomsMembersDelimitersEnum::ValueSeparate
                     . "' || VomsMember.issuer, '"
-                    . VomsMembersDelimitersEnum::CertSeparate
+                    . VomsMembersDelimitersEnum::LineSeperate
                     . "')",
   );
 
+  public $cert_virtualFields = array(
+    'person'      => "string_agg(CoPerson.id || '"
+                     . VomsMembersDelimitersEnum::ValueSeparate
+                     . "' || (Name.given || ' ' || Name.family), '"
+                     . VomsMembersDelimitersEnum::LineSeperate
+                     . "')",
+    'roles'       => "string_agg(CoPersonRole.id || '"
+                     . VomsMembersDelimitersEnum::ValueSeparate
+                     . "' || Cou.name, '"
+                     . VomsMembersDelimitersEnum::LineSeperate
+                     . "')"
+  );
 
   // Validation rules for table elements
   public $validate = array(
@@ -63,6 +75,72 @@ class VomsMember extends AppModel {
       'action' => 'index',
     );
     return $menu_items;
+  }
+
+  /**
+   * Get All CO Certificates linked to
+   *
+   * @param $co_id
+   * @return mixed
+   */
+  public function getCertMapToPersonRole($co_id) {
+    $oargs = array();
+    $oargs['joins'][0]['table'] = 'co_org_identity_links';
+    $oargs['joins'][0]['alias'] = 'CoOrgIdentityLink';
+    $oargs['joins'][0]['type'] = 'INNER';
+    $oargs['joins'][0]['conditions'][0] = 'Cert.org_identity_id = CoOrgIdentityLink.org_identity_id';
+    $oargs['joins'][1]['table'] = 'co_people';
+    $oargs['joins'][1]['alias'] = 'CoPerson';
+    $oargs['joins'][1]['type'] = 'INNER';
+    $oargs['joins'][1]['conditions'][0] = 'CoOrgIdentityLink.co_person_id = CoPerson.id';
+    $oargs['joins'][1]['conditions'][1]['CoPerson.co_id'] = $co_id;
+    $oargs['joins'][2]['table'] = 'names';
+    $oargs['joins'][2]['alias'] = 'Name';
+    $oargs['joins'][2]['type'] = 'INNER';
+    $oargs['joins'][2]['conditions'][0] = 'Name.co_person_id = CoPerson.id';
+    $oargs['joins'][2]['conditions'][1]['Name.primary_name'] = true;
+    $oargs['joins'][3]['table'] = 'co_person_roles';
+    $oargs['joins'][3]['alias'] = 'CoPersonRole';
+    $oargs['joins'][3]['type'] = 'LEFT';
+    $oargs['joins'][3]['conditions'][0] = 'CoPersonRole.co_person_id = CoPerson.id';
+    $oargs['joins'][3]['conditions'][1]['CoPersonRole.status'] = array(StatusEnum::Active, StatusEnum::GracePeriod);
+    $oargs['joins'][4]['table'] = 'cous';
+    $oargs['joins'][4]['alias'] = 'Cou';
+    $oargs['joins'][4]['type'] = 'LEFT';
+    $oargs['joins'][4]['conditions'][0] = 'CoPersonRole.cou_id = Cou.id';
+    $oargs['joins'][4]['conditions'][1] = 'CoPersonRole.cou_id is not null';
+    $oargs['group'] = 'Cert.subject';
+    $oargs['fields'] = array(
+      'Cert.subject',
+      'Cert.person',
+      'Cert.roles',
+    );
+    $oargs['contain'] = false;
+
+    $this->Cert = ClassRegistry::init('Cert');
+    $this->Cert->virtualFields = array_merge_recursive($this->Cert->virtualFields, $this->cert_virtualFields);
+    $mapped_certs = $this->Cert->find('all', $oargs);
+
+    // Construct the final array
+    $subject_list = array();
+    foreach($mapped_certs as $cert_data) {
+      $subject_list[ $cert_data['Cert']['subject'] ] = array();
+      // Person entries
+      $person_entries = explode(VomsMembersDelimitersEnum::LineSeperate, $cert_data['Cert']['person']);
+      $person_entries = array_unique($person_entries);
+      foreach($person_entries as $idx => $pdata) {
+        list($subject_list[ $cert_data['Cert']['subject'] ]['person'][$idx]['id'], $subject_list[ $cert_data['Cert']['subject'] ]['person'][$idx]['primary']) = explode(VomsMembersDelimitersEnum::ValueSeparate, $pdata);
+      }
+      if(!is_null($cert_data['Cert']['roles'])) {
+        // Role entries
+        $role_entries = explode(VomsMembersDelimitersEnum::LineSeperate, $cert_data['Cert']['roles']);
+        $role_entries = array_unique($role_entries);
+        foreach($role_entries as $idx => $rdata) {
+          list($subject_list[ $cert_data['Cert']['subject'] ]['roles'][$idx]['id'], $subject_list[ $cert_data['Cert']['subject'] ]['roles'][$idx]['name']) = explode(VomsMembersDelimitersEnum::ValueSeparate, $rdata);
+        }
+      }
+    }
+    return $subject_list;
   }
 
   /**

@@ -2,6 +2,6 @@
 
 class VomsMembersDelimitersEnum
 {
-  const CertSeparate = '(=>)';
-  const DNSeparate  = '@@@';
+  const LineSeperate = '(%next%)';
+  const ValueSeparate  = '@@@';
 }
