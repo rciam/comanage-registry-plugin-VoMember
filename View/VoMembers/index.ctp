@@ -136,18 +136,18 @@
 
 <?php
 // Load CSS and JS Libraries
-print $this->Html->css('/VomsMember/css/voms_members', array('inline' => false));
+print $this->Html->css('/VoMember/css/vo_members', array('inline' => false));
 // Highlight library
 print $this->Html->script('https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.0/jquery.mark.js', array('inline' => false));
 
 // Construct and load Page title
-$title = ($vv_all) ? _txt('ct.voms_members_all.pl') : _txt('ct.voms_members_my.pl');
+$title = ($vv_all) ? _txt('ct.vo_members_all.pl') : _txt('ct.vo_members_my.pl');
 $params = array('title' => $title);
 print $this->element("pageTitle", $params);
 
 // Add breadcrumbs
 print $this->element("coCrumb");
-$this->Html->addCrumb(_txt('ct.voms_members.pl'));
+$this->Html->addCrumb(_txt('ct.vo_members.pl'));
 
 // Add top links
 $params['topLinks'] = array();
@@ -159,9 +159,9 @@ $params['topLinks'] = array();
     <li class="spin">
       <?php
       print $this->Html->link(
-        ($vv_all) ? _txt('ct.voms_members_my.pl') : _txt('ct.voms_members_all.pl'),
+        ($vv_all) ? _txt('ct.vo_members_my.pl') : _txt('ct.vo_members_all.pl'),
         array(
-          'controller' => 'voms_members',
+          'controller' => 'vo_members',
           'action' => 'index',
           'co' => $this->params['named']['co'],
           'all' => ($vv_all) ? false : true,
@@ -184,14 +184,14 @@ $params['topLinks'] = array();
 <?php
 if($vv_permissions['search']) {
   // Load the top search form
-  $fileLocation = LOCAL . DS . 'Plugin' . DS . 'VomsMember' . DS . "View/VomsMembers/search.inc";
+  $fileLocation = LOCAL . DS . 'Plugin' . DS . 'VoMember' . DS . "View/VoMembers/search.inc";
   if(file_exists($fileLocation)) {
     include($fileLocation);
   }
 }
 ?>
-<div id="voms-name-header" class="listControl" aria-label="<?php print _txt('ct.voms_members.vo'); ?>">
-  <?php print _txt('ct.voms_members.vo'); ?>
+<div id="voms-name-header" class="listControl" aria-label="<?php print _txt('ct.vo_members.vo'); ?>">
+  <?php print _txt('ct.vo_members.vo'); ?>
 </div>
 <div id="voms_members_list" class="population-index">
   <?php $i = 0; ?>
@@ -213,7 +213,7 @@ if($vv_permissions['search']) {
             <?php
             if( isset($vv_cous[$vo_name]) ) {
               print '<span class="person-status">';
-              print _txt('pl.voms_members.inregistry');
+              print _txt('pl.vo_members.inregistry');
               print '</span>';
             }
             ?>
@@ -225,14 +225,14 @@ if($vv_permissions['search']) {
             $filter_cfg = array(
               'vv_id' => $vo_name . $i . "filterbox",
             );
-            print $this->element('VomsMember.filterTxtBox', $filter_cfg);
+            print $this->element('VoMember.filterTxtBox', $filter_cfg);
           }
           ?>
         </div>
         <span class="clearfix"></span>
       </div>
       <div class = "role-panel">
-        <div class="roles-title"><?php print _txt('pl.voms_members.cert.abbreviation'); ?></div>
+        <div class="roles-title"><?php print _txt('pl.vo_members.cert.abbreviation'); ?></div>
         <div class="roles">
           <?php
           foreach ($certs as $cert) {
@@ -266,11 +266,11 @@ if($vv_permissions['search']) {
             print '<div class = "roleinfo">';
             print '<div class = "roletitle">';
             // Subject
-            print _txt('pl.voms_members.subjectdn', array($cert['subject']));
+            print _txt('pl.vo_members.subjectdn', array($cert['subject']));
             // Issuer
             if(!empty($cert['issuer'])) {
               print '<span class="roleTitleText" style="display:block;">';
-              print _txt('pl.voms_members.issuerdn', array($cert['issuer']));
+              print _txt('pl.vo_members.issuerdn', array($cert['issuer']));
               print '</span>';
             }
 

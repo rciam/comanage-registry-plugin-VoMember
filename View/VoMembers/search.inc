@@ -67,8 +67,8 @@ global $cm_lang, $cm_texts;
 <div id="vomsMemberSearch" class="top-search voms-members-searh">
   <?php
   print $this->Form->create('VomsMember',
-    array('url' => array('action'=>'search'),
-      'id'  => 'form_search')
+                             array('url' => array('controller' => 'vo_members', 'action'=>'search'),
+                             'id'  => 'form_search')
   );
 
   $args = array();
@@ -95,19 +95,19 @@ global $cm_lang, $cm_texts;
       <div class="search-field-subgroup">
         <?php
         $args = array();
-        $args['label'] = _txt('sh.voms_members.subjectdn');
-        $args['placeholder'] = _txt('sh.voms_members.subjectdn');
+        $args['label'] = _txt('sh.vo_members.subjectdn');
+        $args['placeholder'] = _txt('sh.vo_members.subjectdn');
         $args['required'] = false;
-        $args['aria-label'] = _txt('sh.voms_members.subjectdn');
+        $args['aria-label'] = _txt('sh.vo_members.subjectdn');
         // XXX shouldn't these fields be sanitized?
         $args['value'] = !empty($this->request->params['named']['search.subject']) ? urlParamDecode($this->request->params['named']['search.subject']) : '';
         print $this->Form->input('search.subject', $args);
 
         $args = array();
-        $args['label'] = _txt('sh.voms_members.issuerdn');
-        $args['placeholder'] = _txt('sh.voms_members.issuerdn');
+        $args['label'] = _txt('sh.vo_members.issuerdn');
+        $args['placeholder'] = _txt('sh.vo_members.issuerdn');
         $args['required'] = false;
-        $args['aria-label'] = _txt('sh.voms_members.issuerdn');
+        $args['aria-label'] = _txt('sh.vo_members.issuerdn');
         // XXX shouldn't these fields be sanitized?
         $args['value'] = !empty($this->request->params['named']['search.issuer']) ? urlParamDecode($this->request->params['named']['search.issuer']) : '';
         print $this->Form->input('search.issuer',$args);
@@ -118,18 +118,18 @@ global $cm_lang, $cm_texts;
         <?php
         if($vv_voms_list_name === false) {
           $args = array();
-          $args['label'] = _txt('sh.voms_members.vo_id');
-          $args['placeholder'] = _txt('sh.voms_members.vo_id');
+          $args['label'] = _txt('sh.vo_members.vo_id');
+          $args['placeholder'] = _txt('sh.vo_members.vo_id');
           $args['required'] = false;
-          $args['aria-label'] = _txt('sh.voms_members.vo_id');
+          $args['aria-label'] = _txt('sh.vo_members.vo_id');
           // XXX shouldn't these fields be sanitized?
           $args['value'] = !empty($this->request->params['named']['search.void']) ? urlParamDecode($this->request->params['named']['search.void']) : '';
           print $this->Form->input('search.void',$args);
         } else {
           $formParams = array('options' => array_combine($vv_voms_list_name, $vv_voms_list_name),
             'type' => 'select',
-            'label' => _txt('sh.voms_members.vo_id'),
-            'empty' => _txt('sh.voms_members.all'),
+            'label' => _txt('sh.vo_members.vo_id'),
+            'empty' => _txt('sh.vo_members.all'),
             'value' => (!empty($this->request->params['named']['search.void']) ? urlParamDecode($this->request->params['named']['search.void']) : ''));
           print $this->Form->input('search.void', $formParams);
         }

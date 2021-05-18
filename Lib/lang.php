@@ -31,28 +31,31 @@ global $cm_lang, $cm_texts;
 // position as passed to _txt.  This can be used to process the arguments in
 // a different order than they were passed.
 
-$cm_voms_member_texts['en_US'] = array(
-  //  Titles per Controller
-  'ct.voms_members.pl'                    => 'External VO Memberships',
-  'ct.voms_members_all.pl'                => 'All External VO Memberships',
-  'ct.voms_members_my.pl'                 => 'My External VO Memberships',
-  'ct.voms_members.1'                     => 'External VO Membership',
-  'ct.voms_members.vo'                    => 'Virtual Organization',
+$cm_vo_member_texts['en_US'] = array(
+  //  Titles per Model (The framework uses the Model name to construct the title.
+  'ct.vo_members.pl'                    => 'External VO Memberships',
+  'ct.voms_members.pl'                  => 'External VO Memberships',
+  'ct.vo_members.1'                     => 'External VO Membership',
+  'ct.voms_members.1'                   => 'External VO Membership',
+
+  'ct.vo_members_all.pl'                => 'All External VO Memberships',
+  'ct.vo_members_my.pl'                 => 'My External VO Memberships',
+  'ct.vo_members.vo'                    => 'Virtual Organization',
 
   // Plugin Texts
-  'pl.voms_members.cert.1'                => 'Certificate',
-  'pl.voms_members.cert.pl'               => 'Certificates',
-  'pl.voms_members.cert.abbreviation'     => 'Cert',
-  'pl.voms_members.subjectdn'             => '<b>Subject DN:</b> %1$s',
-  'pl.voms_members.issuerdn'              => '<b>Issuer DN:</b> %1$s',
-  'pl.voms_members.inregistry'            => 'In Registry',
+  'pl.vo_members.cert.1'                => 'Certificate',
+  'pl.vo_members.cert.pl'               => 'Certificates',
+  'pl.vo_members.cert.abbreviation'     => 'Cert',
+  'pl.vo_members.subjectdn'             => '<b>Subject DN:</b> %1$s',
+  'pl.vo_members.issuerdn'              => '<b>Issuer DN:</b> %1$s',
+  'pl.vo_members.inregistry'            => 'In Registry',
 
   // Search Texts
-  'sh.voms_members.vo_id'                 => 'VO Name',
-  'sh.voms_members.subjectdn'             => 'Subject DN',
-  'sh.voms_members.issuerdn'              => 'Issuer DN',
-  'sh.voms_members.all'                   => 'ALL',
+  'sh.vo_members.vo_id'                 => 'VO Name',
+  'sh.vo_members.subjectdn'             => 'Subject DN',
+  'sh.vo_members.issuerdn'              => 'Issuer DN',
+  'sh.vo_members.all'                   => 'ALL',
 
   // Error
-  'er.voms_members.blackhauled'           => 'Session had expired',
+  'er.vo_members.blackhauled'           => 'Session had expired',
 );

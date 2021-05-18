@@ -1,12 +1,12 @@
 <?php
 App::uses('StandardController', 'Controller');
 
-class VomsMembersController extends StandardController {
+class VoMembersController extends StandardController {
   // Class name, used by Cake
-  public $name = 'VomsMembers';
+  public $name = 'VoMembers';
 
   public $uses = array(
-    'VomsMember.VomsMember'
+    'VoMember.VomsMember'
   );
 
   // Establish pagination parameters for HTML views
@@ -88,7 +88,7 @@ class VomsMembersController extends StandardController {
 
   public function reloadConfig() {
     $this->log(__METHOD__ . '::location => ' . print_r($location, true), LOG_DEBUG);
-    $this->Flash->set(_txt('er.voms_members.blackhauled'), array('key' => 'information'));
+    $this->Flash->set(_txt('er.vo_members.blackhauled'), array('key' => 'information'));
     return $this->redirect("/");
   }
 
@@ -101,7 +101,7 @@ class VomsMembersController extends StandardController {
 
   public function search() {
     $url['action'] = $this->request->data['Action']['name'];
-    $url['controller'] = 'voms_members';
+    $url['controller'] = 'vo_members';
 
     // build a URL will all the search elements in it
     // the resulting URL will be
