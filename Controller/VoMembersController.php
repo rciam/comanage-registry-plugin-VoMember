@@ -31,9 +31,9 @@ class VoMembersController extends StandardController {
     $voms_list_names = array();
 
     foreach($voms_members as $voms) {
-      $certificates = explode(VomsMembersDelimitersEnum::LineSeperate, $voms["VomsMember"]["certificate"]);
+      $certificates = explode(VoMembersDelimitersEnum::LineSeperate, $voms["VomsMember"]["certificate"]);
       foreach($certificates as $cert) {
-        list($subject, $issuer) = explode(VomsMembersDelimitersEnum::ValueSeparate, $cert);
+        list($subject, $issuer) = explode(VoMembersDelimitersEnum::ValueSeparate, $cert);
         $voms_list[$voms["VomsMember"]["vo_id"]][] = array(
           'subject' => $subject,
           'issuer' => $issuer,

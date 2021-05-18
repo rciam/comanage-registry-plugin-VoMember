@@ -7,22 +7,22 @@ class VomsMember extends AppModel {
 
   public $virtualFields = array(
     'certificate' => "string_agg(VomsMember.subject || '"
-                    . VomsMembersDelimitersEnum::ValueSeparate
+                    . VoMembersDelimitersEnum::ValueSeparate
                     . "' || VomsMember.issuer, '"
-                    . VomsMembersDelimitersEnum::LineSeperate
+                    . VoMembersDelimitersEnum::LineSeperate
                     . "')",
   );
 
   public $cert_virtualFields = array(
     'person'      => "string_agg(CoPerson.id || '"
-                     . VomsMembersDelimitersEnum::ValueSeparate
+                     . VoMembersDelimitersEnum::ValueSeparate
                      . "' || (Name.given || ' ' || Name.family), '"
-                     . VomsMembersDelimitersEnum::LineSeperate
+                     . VoMembersDelimitersEnum::LineSeperate
                      . "')",
     'roles'       => "string_agg(CoPersonRole.id || '"
-                     . VomsMembersDelimitersEnum::ValueSeparate
+                     . VoMembersDelimitersEnum::ValueSeparate
                      . "' || Cou.name, '"
-                     . VomsMembersDelimitersEnum::LineSeperate
+                     . VoMembersDelimitersEnum::LineSeperate
                      . "')"
   );
 
@@ -106,17 +106,17 @@ class VomsMember extends AppModel {
     foreach($mapped_certs as $cert_data) {
       $subject_list[ $cert_data['Cert']['subject'] ] = array();
       // Person entries
-      $person_entries = explode(VomsMembersDelimitersEnum::LineSeperate, $cert_data['Cert']['person']);
+      $person_entries = explode(VoMembersDelimitersEnum::LineSeperate, $cert_data['Cert']['person']);
       $person_entries = array_unique($person_entries);
       foreach($person_entries as $idx => $pdata) {
-        list($subject_list[ $cert_data['Cert']['subject'] ]['person'][$idx]['id'], $subject_list[ $cert_data['Cert']['subject'] ]['person'][$idx]['primary']) = explode(VomsMembersDelimitersEnum::ValueSeparate, $pdata);
+        list($subject_list[ $cert_data['Cert']['subject'] ]['person'][$idx]['id'], $subject_list[ $cert_data['Cert']['subject'] ]['person'][$idx]['primary']) = explode(VoMembersDelimitersEnum::ValueSeparate, $pdata);
       }
       if(!is_null($cert_data['Cert']['roles'])) {
         // Role entries
-        $role_entries = explode(VomsMembersDelimitersEnum::LineSeperate, $cert_data['Cert']['roles']);
+        $role_entries = explode(VoMembersDelimitersEnum::LineSeperate, $cert_data['Cert']['roles']);
         $role_entries = array_unique($role_entries);
         foreach($role_entries as $idx => $rdata) {
-          list($subject_list[ $cert_data['Cert']['subject'] ]['roles'][$idx]['id'], $subject_list[ $cert_data['Cert']['subject'] ]['roles'][$idx]['name']) = explode(VomsMembersDelimitersEnum::ValueSeparate, $rdata);
+          list($subject_list[ $cert_data['Cert']['subject'] ]['roles'][$idx]['id'], $subject_list[ $cert_data['Cert']['subject'] ]['roles'][$idx]['name']) = explode(VoMembersDelimitersEnum::ValueSeparate, $rdata);
         }
       }
     }

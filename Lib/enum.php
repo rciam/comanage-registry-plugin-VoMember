@@ -1,6 +1,6 @@
 <?php
 
-class VomsMembersDelimitersEnum
+class VoMembersDelimitersEnum
 {
   const LineSeperate = '(%next%)';
   const ValueSeparate  = '@@@';
