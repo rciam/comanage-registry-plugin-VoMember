@@ -1,6 +1,7 @@
 <?php
 
 class VomsMember extends AppModel {
+  public $name = "VomsMember";
 
   // Default display field for cake generated views
   public $displayField = 'subject';

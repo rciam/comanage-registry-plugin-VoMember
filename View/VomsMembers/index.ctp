@@ -161,7 +161,7 @@ $params['topLinks'] = array();
       print $this->Html->link(
         ($vv_all) ? _txt('ct.vo_members_my.pl') : _txt('ct.vo_members_all.pl'),
         array(
-          'controller' => 'vo_members',
+          'controller' => 'voms_members',
           'action' => 'index',
           'co' => $this->params['named']['co'],
           'all' => ($vv_all) ? false : true,
@@ -184,7 +184,7 @@ $params['topLinks'] = array();
 <?php
 if($vv_permissions['search']) {
   // Load the top search form
-  $fileLocation = LOCAL . DS . 'Plugin' . DS . 'VoMember' . DS . "View/VoMembers/search.inc";
+  $fileLocation = LOCAL . DS . 'Plugin' . DS . 'VoMember' . DS . "View/VomsMembers/search.inc";
   if(file_exists($fileLocation)) {
     include($fileLocation);
   }

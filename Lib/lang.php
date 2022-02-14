@@ -50,6 +50,15 @@ $cm_vo_member_texts['en_US'] = array(
   'pl.vo_members.issuerdn'              => '<b>Issuer DN:</b> %1$s',
   'pl.vo_members.inregistry'            => 'In Registry',
 
+  // Configuration View
+  'pl.vo_members.ops'                    => 'Operations Portal',
+  'pl.vo_members.place.holder'           => 'Placeholder',
+  'pl.vo_members.base.url'               => 'Base URL',
+  'pl.vo_members.base.url.desc'          => 'Base Url including http(s):// protocol prefix',
+  'pl.vo_members.endpoint'               => 'API endpoint',
+  'pl.vo_members.endpoint.ops.desc'      => 'API endpoint for Operations Portal',
+  'pl.vo_members.authkey'                => 'Authorization Key',
+
   // Search Texts
   'sh.vo_members.vo_id'                 => 'VO Name',
   'sh.vo_members.subjectdn'             => 'Subject DN',
@@ -58,4 +67,5 @@ $cm_vo_member_texts['en_US'] = array(
 
   // Error
   'er.vo_members.blackhauled'           => 'Session had expired',
+  'er.vo_members.db.failed'             => 'Database Save failed',
 );

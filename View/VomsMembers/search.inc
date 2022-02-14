@@ -67,7 +67,7 @@ global $cm_lang, $cm_texts;
 <div id="vomsMemberSearch" class="top-search voms-members-searh">
   <?php
   print $this->Form->create('VomsMember',
-                             array('url' => array('controller' => 'vo_members', 'action'=>'search'),
+                             array('url' => array('controller' => 'voms_members', 'action'=>'search'),
                              'id'  => 'form_search')
   );
 
