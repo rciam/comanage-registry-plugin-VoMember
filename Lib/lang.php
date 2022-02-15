@@ -65,7 +65,13 @@ $cm_vo_member_texts['en_US'] = array(
   'sh.vo_members.issuerdn'              => 'Issuer DN',
   'sh.vo_members.all'                   => 'ALL',
 
+  // Shell Text
+  'sh.sync.no.config'                   => 'VoMember is not configured',
+  'sh.sync.arg.coid'                    => 'Numeric CO ID to run tasks for (all COs if not specified)',
+
   // Error
   'er.vo_members.blackhauled'           => 'Session had expired',
   'er.vo_members.db.failed'             => 'Database Save failed',
+  'er.vo_members.notfound'              => '%1$s Not Found',
+  'er.vo_members.http.failed'           => 'Request Failed',
 );
