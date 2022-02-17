@@ -74,4 +74,5 @@ $cm_vo_member_texts['en_US'] = array(
   'er.vo_members.db.failed'             => 'Database Save failed',
   'er.vo_members.notfound'              => '%1$s Not Found',
   'er.vo_members.http.failed'           => 'Request Failed',
+  'er.vo_members.schema'                => 'Read Schema Failed'
 );

@@ -52,30 +52,6 @@ class VoMember extends AppModel {
   }
 
   /**
-   * @param Integer $co_id
-   * @return array|null
-   */
-
-  public function getConfiguration($co_id)
-  {
-
-    // Get all the config data. Even the EOFs that i have now deleted
-    $args = array();
-    $args['conditions']['VoMember.co_id'] = $co_id;
-    $args['contain'] = false;
-
-    $data = $this->find('first', $args);
-    // There is no configuration available for the plugin. Abort
-    if (empty($data)) {
-      return null;
-    }
-
-    Configure::write('Security.useOpenSsl', true);
-    $data["VoMember"]["authkey_ops"] = Security::decrypt(base64_decode($data["VoMember"]["authkey_ops"]), Configure::read('Security.salt'));
-    return $data;
-  }
-
-  /**
    * Expose menu items.
    *
    * @ return Array with menu location type as key and array of labels, controllers, actions as values.
@@ -117,5 +93,28 @@ class VoMember extends AppModel {
     return $action_list;
   }
 
+  /**
+   * @param Integer $coId
+   * @return array|null
+   */
+
+  public function getConfiguration($coId)
+  {
+
+    // Get all the config data. Even the EOFs that i have now deleted
+    $args = array();
+    $args['conditions']['VoMember.co_id'] = $coId;
+    $args['contain'] = false;
+
+    $data = $this->find('first', $args);
+    // There is no configuration available for the plugin. Abort
+    if (empty($data)) {
+      return null;
+    }
+
+    Configure::write('Security.useOpenSsl', true);
+    $data["VoMember"]["authkey_ops"] = Security::decrypt(base64_decode($data["VoMember"]["authkey_ops"]), Configure::read('Security.salt'));
+    return $data;
+  }
 
 }

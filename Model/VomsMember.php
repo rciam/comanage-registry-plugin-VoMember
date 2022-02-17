@@ -6,6 +6,12 @@ class VomsMember extends AppModel {
   // Default display field for cake generated views
   public $displayField = 'subject';
 
+  // Cache the Http connection and server configuration
+  protected $Http = null;
+  protected $baseUrl = null;
+  protected $pathURL = null;
+  protected $authKey = null;
+
   public $virtualFields = array(
     'certificate' => "string_agg(VomsMember.subject || '"
                     . VoMembersDelimitersEnum::ValueSeparate
@@ -56,6 +62,35 @@ class VomsMember extends AppModel {
         'rule' => array('validateInput'),
       ),
     ),
+    'email' => array(
+      'rule' => 'email',
+      'required' => false,
+      'allowEmpty' => true
+    ),
+    'username' => array(
+      'rule' => '/.*/',
+      'required' => false,
+      'allowEmpty' => true
+    ),
+    'fqan' => array(
+      'rule' => '/.*/', // TODO: Ideally we should be checking for JSON data
+      'required' => false,
+      'allowEmpty' => true
+    ),
+    'first_update' => array(
+      'content' => array(
+        'rule' => array('validateTimestamp'),
+        'required' => false,
+        'allowEmpty' => true
+      )
+    ),
+    'last_update' => array(
+      'content' => array(
+        'rule' => array('validateTimestamp'),
+        'required' => false,
+        'allowEmpty' => true
+      )
+    )
   );
 
   /**
@@ -256,5 +291,143 @@ class VomsMember extends AppModel {
     // Extract an array with the User's Subject DNs
     $subject_dns = Hash::extract($orgIdentities, '{n}.Cert.{n}.subject');
     return $subject_dns;
+  }
+
+  /**
+   * @param string  $config Plugin configuration
+   */
+  public function opsConnect($config) {
+    if(!$config['authkey_ops']) {
+      throw new InvalidArgumentException(_txt('er.vo_members.notfound', array('Authentication Key')));
+    }
+
+    if(!$config['base_url']) {
+      throw new InvalidArgumentException(_txt('er.vo_members.notfound', array('Base URL')));
+    }
+
+    if(!$config['endpoint_ops']) {
+      throw new InvalidArgumentException(_txt('er.vo_members.notfound', array('Path URL')));
+    }
+
+    $this->baseUrl = $config['base_url'];
+    $this->pathURL = $config['endpoint_ops'];
+    $this->authKey = $config['authkey_ops'];
+
+    $this->Http = new HttpSocket(array(
+                                   'ssl_verify_host' => version_compare(PHP_VERSION, '5.6.0', '>=')
+                                 ));
+  }
+
+  /**
+   * @param array $data    Data for POST method
+   * @param string $action HTTP Request Protocol
+   * @return mixed
+   */
+  public function opsRequest($data=array(), $action="get") {
+    $options = array(
+      'header' => array(
+        'Accept'        => 'application/json',
+        'X-API-Key'     =>  $this->authKey
+      )
+    );
+
+    $results = $this->Http->$action(
+      $this->baseUrl . $this->pathURL,
+      ($action == 'get' ? $data : json_encode($data)),
+      $options);
+
+    if($results->code != 200) {
+      // This is probably an RDF blob, which is slightly annoying to parse.
+      // Rather than do it properly since we don't parse RDF anywhere else,
+      // we return a generic error.
+      throw new RuntimeException(_txt('er.vo_members.http.failed', array($results->code)));
+    }
+
+    return json_decode($results->body);
+  }
+
+
+  /**
+   * Parse the data into what my database expects to save
+   *
+   * @param $data     JSON Decoded data
+   * @return array    Create list of values ready for saveMany method
+   */
+  public function parseOpsResponse($data) {
+      if(empty($data)) {
+        return array();
+      }
+
+      $mapper = array(
+        'USERVO' => 'username',
+        'EMAIL'  => 'email',
+        'CERTDN' => 'subject',
+        'CA'     => 'issuer',
+        'VO'     => 'vo_id',
+        'fqans'  => 'fqans',
+        'FIRST_UPDATE' => 'first_update',
+        'LAST_UPDATE'  => 'last_update'
+      );
+
+      $values = array();
+      foreach ($data as $idx => $items) {
+        foreach ($items->row as $item) {
+          $column = key($item);
+          $values[$idx][ $mapper[$column] ] = $item->$column[0] ?? '';
+        }
+        $values[$idx]["created"] = date('Y-m-d H:i:s');
+      }
+
+      return $values;
+  }
+
+  public function createTempVoms() {
+    // Use the ConnectionManager to get the database config to pass to adodb.
+    $db = ConnectionManager::getDataSource('default');
+
+    $db_driver = explode("/", $db->config['datasource'], 2);
+
+    if($db_driver[0] != 'Database') {
+      throw new RuntimeException("Unsupported db_method: " . $db_driver[0]);
+    }
+
+    $db_driverName = $db_driver[1];
+    if(preg_match("/mysql/i", $db_driverName) && PHP_MAJOR_VERSION >= 7) {
+      $db_driverName = 'mysqli';
+    }
+
+    $dbc = ADONewConnection($db_driverName);
+
+    if($dbc->Connect($db->config['host'],
+                     $db->config['login'],
+                     $db->config['password'],
+                     $db->config['database'])) {
+      // Plugins can have their own schema files, so we need to account for that
+      // todo: i need the local path
+      $schemaFile = LOCAL . 'Plugin' . DS . 'VoMember'
+                                     . DS . 'Config'
+                                     . DS . 'Schema'
+                                     . DS . 'schema.tmp.xml';
+
+      if(!is_readable($schemaFile)) {
+        throw new RuntimeException(_txt('er.vo_members.http.failed'));
+      }
+
+//      $this->out(_txt('op.db.schema', array($schemaFile)));
+      $schema = new adoSchema($dbc);
+      $schema->setPrefix($db->config['prefix']);
+      $sql = $schema->ParseSchema($schemaFile);
+
+      switch($schema->ExecuteSchema($sql, true)) {
+        case 2: // !!!
+          $this->out(_txt('op.db.ok'));
+          break;
+        default:
+          $this->out(_txt('er.db.schema'));
+          break;
+      }
+
+      $dbc->Disconnect();
+    }
   }
 }
