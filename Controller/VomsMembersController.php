@@ -149,6 +149,17 @@ class VomsMembersController extends StandardController {
       $issuer = urlParamDecode($this->request->params['named']['search.issuer']);
       $ret['conditions']['VomsMember.issuer iLIKE'] = "%{$issuer}%";
     }
+    // Email
+    if(isset($this->request->params['named']['search.email'])) {
+      $email = urlParamDecode($this->request->params['named']['search.email']);
+      $ret['conditions']['VomsMember.email iLIKE'] = "%{$email}%";
+    }
+
+    // Username
+    if(isset($this->request->params['named']['search.username'])) {
+      $username = urlParamDecode($this->request->params['named']['search.username']);
+      $ret['conditions']['VomsMember.username iLIKE'] = "%{$username}%";
+    }
 
     if(isset($this->request->params["named"]["all"])
       && $this->request->params["named"]["all"]

@@ -62,7 +62,7 @@ class VoMember extends AppModel {
     $this->log(__METHOD__ . '::@', LOG_DEBUG);
     $menu_items = array();
     $menu_items['cogroups'][_txt('ct.vo_members.pl')] = array(
-      'controller' => "vom_members",
+      'controller' => "voms_members",
       'action' => 'index',
     );
     $menu_items['coconfig'][_txt('ct.vo_members.pl')] = array(

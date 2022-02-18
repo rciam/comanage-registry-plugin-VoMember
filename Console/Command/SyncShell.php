@@ -39,14 +39,13 @@ class SyncShell extends AppShell {
       // Request the data
       $response = $this->VomsMember->opsRequest();
       // Parse data and create insert values
-      $insert_values = $this->VomsMember->parseOpsResponse($response->result);
-      // Create the temp table and insert the new values
-      $this->VomsMember->createTempVoms();
+      $data = $this->VomsMember->parseOpsResponse($response['result']);
+      // Update the table records
+      $this->VomsMember->processData($data);
 
 
     } catch (Exception $e) {
-      $this->out($e->getMessage());
-      $this->out("- " . _txt('sh.sync.no.config'));
+      $this->out('<error>' . $e->getMessage() . '</error>');
     }
 
   }

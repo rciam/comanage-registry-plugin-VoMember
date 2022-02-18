@@ -36,7 +36,7 @@ class VomsMember extends AppModel {
   // Validation rules for table elements
   public $validate = array(
     'vo_id' => array(
-      'rule' => 'numeric',
+      'rule' => '/.*/',
       'required' => true,
       'message' => 'A VO ID must be provided',
     ),
@@ -44,7 +44,7 @@ class VomsMember extends AppModel {
       'content' => array(
         'rule' => array('maxLength', 512),
         'required' => false,
-        'allowEmpty' => false,
+        'allowEmpty' => true,
         'message' => 'Please enter a valid cert subject DN',
       ),
       'filter' => array(
@@ -63,7 +63,7 @@ class VomsMember extends AppModel {
       ),
     ),
     'email' => array(
-      'rule' => 'email',
+      'rule' => '/.*/',
       'required' => false,
       'allowEmpty' => true
     ),
@@ -343,7 +343,7 @@ class VomsMember extends AppModel {
       throw new RuntimeException(_txt('er.vo_members.http.failed', array($results->code)));
     }
 
-    return json_decode($results->body);
+    return json_decode($results->body, true);
   }
 
 
@@ -371,63 +371,58 @@ class VomsMember extends AppModel {
 
       $values = array();
       foreach ($data as $idx => $items) {
-        foreach ($items->row as $item) {
+        foreach ($items['row'] as $item) {
           $column = key($item);
-          $values[$idx][ $mapper[$column] ] = $item->$column[0] ?? '';
+          if($column == 'fqans') {
+            $values[$idx][ $mapper[$column] ] = serialize(json_encode($item[$column][0])) ?? '';
+          } else {
+            $values[$idx][ $mapper[$column] ] = $item[$column][0] ?? '';
+          }
         }
-        $values[$idx]["created"] = date('Y-m-d H:i:s');
+        $values[$idx]['created'] = date('Y-m-d H:i:s', time());
       }
 
       return $values;
   }
 
-  public function createTempVoms() {
-    // Use the ConnectionManager to get the database config to pass to adodb.
+  /**
+   * Update the table with the existing data
+   *
+   * @param array $data
+   * @return void
+   */
+  public function processData($data) {
+    // The users view is no longer required.
     $db = ConnectionManager::getDataSource('default');
+    $db->begin();
 
-    $db_driver = explode("/", $db->config['datasource'], 2);
-
-    if($db_driver[0] != 'Database') {
-      throw new RuntimeException("Unsupported db_method: " . $db_driver[0]);
+    if(isset($db->config['prefix'])) {
+      $prefix = $db->config['prefix'];
     }
 
-    $db_driverName = $db_driver[1];
-    if(preg_match("/mysql/i", $db_driverName) && PHP_MAJOR_VERSION >= 7) {
-      $db_driverName = 'mysqli';
+    $table = Inflector::tableize($this->name);
+    $this->query("TRUNCATE " . ($prefix ?? '') . $table);
+
+    // Reset the model state in case we're called more than once
+    $this->create($data);
+
+    try {
+      $ret = $this->saveAll($data);
+    }
+    catch(Exception $e) {
+      $err = filter_var($e->getMessage(),FILTER_SANITIZE_SPECIAL_CHARS);
+      $this->log(__METHOD__ . "::error message => " . $err, LOG_DEBUG);
+      $db->rollback();
+      return;
     }
 
-    $dbc = ADONewConnection($db_driverName);
-
-    if($dbc->Connect($db->config['host'],
-                     $db->config['login'],
-                     $db->config['password'],
-                     $db->config['database'])) {
-      // Plugins can have their own schema files, so we need to account for that
-      // todo: i need the local path
-      $schemaFile = LOCAL . 'Plugin' . DS . 'VoMember'
-                                     . DS . 'Config'
-                                     . DS . 'Schema'
-                                     . DS . 'schema.tmp.xml';
-
-      if(!is_readable($schemaFile)) {
-        throw new RuntimeException(_txt('er.vo_members.http.failed'));
-      }
-
-//      $this->out(_txt('op.db.schema', array($schemaFile)));
-      $schema = new adoSchema($dbc);
-      $schema->setPrefix($db->config['prefix']);
-      $sql = $schema->ParseSchema($schemaFile);
-
-      switch($schema->ExecuteSchema($sql, true)) {
-        case 2: // !!!
-          $this->out(_txt('op.db.ok'));
-          break;
-        default:
-          $this->out(_txt('er.db.schema'));
-          break;
-      }
-
-      $dbc->Disconnect();
+    if(!$ret) {
+      $invalidFields = $this->invalidFields();
+      $this->log(__METHOD__ . "::invalid fields => " . $invalidFields, LOG_DEBUG);
+      $db->rollback();
+      return;
     }
+    $db->commit();
   }
+
 }

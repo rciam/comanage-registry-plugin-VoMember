@@ -57,7 +57,6 @@
     <field name="fqans" type="T" />
     <field name="first_upate" type="T" />
     <field name="last_update" type="T" />
-    <field name="created" type="T" />
     <index name="voms_members_i1">
       <col>subject</col>
     </index>

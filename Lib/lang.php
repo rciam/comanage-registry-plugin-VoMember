@@ -63,6 +63,8 @@ $cm_vo_member_texts['en_US'] = array(
   'sh.vo_members.vo_id'                 => 'VO Name',
   'sh.vo_members.subjectdn'             => 'Subject DN',
   'sh.vo_members.issuerdn'              => 'Issuer DN',
+  'sh.vo_members.email'                 => 'Email',
+  'sh.vo_members.username'              => 'Username',
   'sh.vo_members.all'                   => 'ALL',
 
   // Shell Text
