@@ -111,6 +111,15 @@ global $cm_lang, $cm_texts;
         // XXX shouldn't these fields be sanitized?
         $args['value'] = !empty($this->request->params['named']['search.issuer']) ? urlParamDecode($this->request->params['named']['search.issuer']) : '';
         print $this->Form->input('search.issuer',$args);
+
+        $args = array();
+        $args['label'] = _txt('sh.vo_members.username');
+        $args['placeholder'] = _txt('sh.vo_members.username');
+        $args['required'] = false;
+        $args['aria-label'] = _txt('sh.vo_members.username');
+        // XXX shouldn't these fields be sanitized?
+        $args['value'] = !empty($this->request->params['named']['search.username']) ? urlParamDecode($this->request->params['named']['search.username']) : '';
+        print $this->Form->input('search.username',$args);
         ?>
       </div>
 
@@ -133,6 +142,15 @@ global $cm_lang, $cm_texts;
             'value' => (!empty($this->request->params['named']['search.void']) ? urlParamDecode($this->request->params['named']['search.void']) : ''));
           print $this->Form->input('search.void', $formParams);
         }
+
+        $args = array();
+        $args['type'] = 'text';
+        $args['label'] = _txt('sh.vo_members.email');
+        $args['placeholder'] = _txt('sh.vo_members.email');
+        $args['required'] = false;
+        $args['aria-label'] = _txt('sh.vo_members.email');
+        $args['value'] = !empty($this->request->params['named']['search.email']) ? urlParamDecode($this->request->params['named']['search.email']) : '';
+        print $this->Form->input('search.email',$args);
         ?>
       </div>
 

@@ -43,8 +43,8 @@ class VomsMembersController extends StandardController {
 
     // Fetch VOMs names for the drop down list
     // Get all VOMS
-    if($this->viewVars["vv_permissions"]["all"]
-      && $this->viewVars["vv_permissions"]["all"]) {
+    if(isset($this->viewVars["vv_permissions"]["all"])
+       && $this->viewVars["vv_permissions"]["all"]) {
       $all_voms = $this->VomsMember->getAllVomsIDs();
       if(!empty($all_voms)) {
         $all_voms_list = Hash::extract($all_voms, '{n}.VomsMember.vo_id');

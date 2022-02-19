@@ -60,7 +60,7 @@ class SyncShell extends AppShell {
       'coid',
       array(
         'short' => 'c',
-        'help' => _txt('sh.sync.arg.coid'),
+        'help' => 'Numeric CO ID to run tasks for (all COs if not specified)',
         'boolean' => false,
         'default' => false
       )

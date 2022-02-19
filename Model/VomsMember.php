@@ -12,6 +12,9 @@ class VomsMember extends AppModel {
   protected $pathURL = null;
   protected $authKey = null;
 
+  // TODO: Since the data only change from Source i will cache them and invalidate the cache only
+  //       if the saveAll succeeds
+
   public $virtualFields = array(
     'certificate' => "string_agg(VomsMember.subject || '"
                     . VoMembersDelimitersEnum::ValueSeparate
@@ -31,6 +34,17 @@ class VomsMember extends AppModel {
                      . "' || Cou.name, '"
                      . VoMembersDelimitersEnum::LineSeperate
                      . "')"
+  );
+
+  private $mapper = array(
+    'USERVO' => 'username',
+    'EMAIL'  => 'email',
+    'CERTDN' => 'subject',
+    'CA'     => 'issuer',
+    'VO'     => 'vo_id',
+    'fqans'  => 'fqans',
+    'FIRST_UPDATE' => 'first_update',
+    'LAST_UPDATE'  => 'last_update'
   );
 
   // Validation rules for table elements
@@ -358,28 +372,16 @@ class VomsMember extends AppModel {
         return array();
       }
 
-      $mapper = array(
-        'USERVO' => 'username',
-        'EMAIL'  => 'email',
-        'CERTDN' => 'subject',
-        'CA'     => 'issuer',
-        'VO'     => 'vo_id',
-        'fqans'  => 'fqans',
-        'FIRST_UPDATE' => 'first_update',
-        'LAST_UPDATE'  => 'last_update'
-      );
-
       $values = array();
       foreach ($data as $idx => $items) {
         foreach ($items['row'] as $item) {
           $column = key($item);
           if($column == 'fqans') {
-            $values[$idx][ $mapper[$column] ] = serialize(json_encode($item[$column][0])) ?? '';
+            $values[$idx][ $this->mapper[$column] ] = serialize(json_encode($item[$column][0])) ?? '';
           } else {
-            $values[$idx][ $mapper[$column] ] = $item[$column][0] ?? '';
+            $values[$idx][ $this->mapper[$column] ] = $item[$column][0] ?? '';
           }
         }
-        $values[$idx]['created'] = date('Y-m-d H:i:s', time());
       }
 
       return $values;
@@ -392,7 +394,16 @@ class VomsMember extends AppModel {
    * @return void
    */
   public function processData($data) {
-    // The users view is no longer required.
+    if(empty($data)) {
+      return;
+    }
+
+
+//    // The users view is no longer required.
+    // XXX Each time i pull the data from the operations portal all of them will be udpated because
+    //     at least the column last_updated will have a new value. Perhaps the best approach is to
+    // Create temp table does not inherit indexes and still we need to copy. Perhaps the best approach is
+    // to clone the table, delete the old one and then rename the temp table
     $db = ConnectionManager::getDataSource('default');
     $db->begin();
 
@@ -400,14 +411,17 @@ class VomsMember extends AppModel {
       $prefix = $db->config['prefix'];
     }
 
-    $table = Inflector::tableize($this->name);
-    $this->query("TRUNCATE " . ($prefix ?? '') . $table);
-
-    // Reset the model state in case we're called more than once
-    $this->create($data);
-
+    // Create table as cm_voms_members only schema
+    $table = ($prefix ?? '') . Inflector::tableize($this->name);
     try {
-      $ret = $this->saveAll($data);
+      $this->VomsMemberClone = ClassRegistry::init('VoMember.VomsMemberClone');
+      $this->VomsMemberClone->tblCreate($table);
+      // save the data
+      $this->VomsMemberClone->import($data);
+      // Drop the current table
+      $this->query('DROP TABLE IF EXISTS ' . $table);
+      // Rename the tmp table
+      $this->VomsMemberClone->tableRename($table);
     }
     catch(Exception $e) {
       $err = filter_var($e->getMessage(),FILTER_SANITIZE_SPECIAL_CHARS);
@@ -416,12 +430,6 @@ class VomsMember extends AppModel {
       return;
     }
 
-    if(!$ret) {
-      $invalidFields = $this->invalidFields();
-      $this->log(__METHOD__ . "::invalid fields => " . $invalidFields, LOG_DEBUG);
-      $db->rollback();
-      return;
-    }
     $db->commit();
   }
 

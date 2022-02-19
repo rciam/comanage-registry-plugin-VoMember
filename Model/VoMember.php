@@ -68,7 +68,7 @@ class VoMember extends AppModel {
     $menu_items['coconfig'][_txt('ct.vo_members.pl')] = array(
       'controller' => "vo_members",
       'action' => 'edit',
-      'icon' => 'account_box'
+      'icon' => 'account_box' // fixme: icon does not work
     );
     return $menu_items;
   }
