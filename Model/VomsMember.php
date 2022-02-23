@@ -405,7 +405,6 @@ class VomsMember extends AppModel {
     // Create temp table does not inherit indexes and still we need to copy. Perhaps the best approach is
     // to clone the table, delete the old one and then rename the temp table
     $db = ConnectionManager::getDataSource('default');
-    $db->begin();
 
     if(isset($db->config['prefix'])) {
       $prefix = $db->config['prefix'];
@@ -417,9 +416,11 @@ class VomsMember extends AppModel {
       $this->VomsMemberClone = ClassRegistry::init('VoMember.VomsMemberClone');
       $this->VomsMemberClone->tblCreate($table);
       // save the data
-      $this->VomsMemberClone->import($data);
+      $this->VomsMemberClone->importData($data);
+
+      $db->begin();
       // Drop the current table
-      $this->query('DROP TABLE IF EXISTS ' . $table);
+      $this->query('DROP TABLE IF EXISTS ' . $table . ' CASCADE');
       // Rename the tmp table
       $this->VomsMemberClone->tableRename($table);
     }
@@ -430,6 +431,7 @@ class VomsMember extends AppModel {
       return;
     }
 
+    $db->cacheSources = true;
     $db->commit();
   }
 
