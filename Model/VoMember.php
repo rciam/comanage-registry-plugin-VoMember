@@ -108,7 +108,7 @@ class VoMember extends AppModel {
 
     $data = $this->find('first', $args);
     // There is no configuration available for the plugin. Abort
-    if (empty($data)) {
+    if(empty($data)) {
       return null;
     }
 

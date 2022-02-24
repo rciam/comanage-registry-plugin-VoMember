@@ -6,7 +6,7 @@ class VoMembersController extends StandardController {
   public $name = 'VoMembers';
 
   /**
-   * Edit Rciam Stats Viewer Settings
+   * Edit Settings
    *
    * @param integer $id
    * @return void
