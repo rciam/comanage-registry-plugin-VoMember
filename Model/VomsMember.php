@@ -1,9 +1,19 @@
 <?php
 
 class VomsMember extends AppModel {
+  public $name = "VomsMember";
 
   // Default display field for cake generated views
   public $displayField = 'subject';
+
+  // Cache the Http connection and server configuration
+  protected $Http = null;
+  protected $baseUrl = null;
+  protected $pathURL = null;
+  protected $authKey = null;
+
+  // TODO: Since the data only change from Source i will cache them and invalidate the cache only
+  //       if the saveAll succeeds
 
   public $virtualFields = array(
     'certificate' => "string_agg(VomsMember.subject || '"
@@ -26,10 +36,21 @@ class VomsMember extends AppModel {
                      . "')"
   );
 
+  private $mapper = array(
+    'USERVO' => 'username',
+    'EMAIL'  => 'email',
+    'CERTDN' => 'subject',
+    'CA'     => 'issuer',
+    'VO'     => 'vo_id',
+    'fqans'  => 'fqans',
+    'FIRST_UPDATE' => 'first_update',
+    'LAST_UPDATE'  => 'last_update'
+  );
+
   // Validation rules for table elements
   public $validate = array(
     'vo_id' => array(
-      'rule' => 'numeric',
+      'rule' => '/.*/',
       'required' => true,
       'message' => 'A VO ID must be provided',
     ),
@@ -37,7 +58,7 @@ class VomsMember extends AppModel {
       'content' => array(
         'rule' => array('maxLength', 512),
         'required' => false,
-        'allowEmpty' => false,
+        'allowEmpty' => true,
         'message' => 'Please enter a valid cert subject DN',
       ),
       'filter' => array(
@@ -55,6 +76,35 @@ class VomsMember extends AppModel {
         'rule' => array('validateInput'),
       ),
     ),
+    'email' => array(
+      'rule' => '/.*/',
+      'required' => false,
+      'allowEmpty' => true
+    ),
+    'username' => array(
+      'rule' => '/.*/',
+      'required' => false,
+      'allowEmpty' => true
+    ),
+    'fqan' => array(
+      'rule' => '/.*/', // TODO: Ideally we should be checking for JSON data
+      'required' => false,
+      'allowEmpty' => true
+    ),
+    'first_update' => array(
+      'content' => array(
+        'rule' => array('validateTimestamp'),
+        'required' => false,
+        'allowEmpty' => true
+      )
+    ),
+    'last_update' => array(
+      'content' => array(
+        'rule' => array('validateTimestamp'),
+        'required' => false,
+        'allowEmpty' => true
+      )
+    )
   );
 
   /**
@@ -256,4 +306,133 @@ class VomsMember extends AppModel {
     $subject_dns = Hash::extract($orgIdentities, '{n}.Cert.{n}.subject');
     return $subject_dns;
   }
+
+  /**
+   * @param string  $config Plugin configuration
+   */
+  public function opsConnect($config) {
+    if(!$config['authkey_ops']) {
+      throw new InvalidArgumentException(_txt('er.vo_members.notfound', array('Authentication Key')));
+    }
+
+    if(!$config['base_url']) {
+      throw new InvalidArgumentException(_txt('er.vo_members.notfound', array('Base URL')));
+    }
+
+    if(!$config['endpoint_ops']) {
+      throw new InvalidArgumentException(_txt('er.vo_members.notfound', array('Path URL')));
+    }
+
+    $this->baseUrl = $config['base_url'];
+    $this->pathURL = $config['endpoint_ops'];
+    $this->authKey = $config['authkey_ops'];
+
+    $this->Http = new HttpSocket(array(
+                                   'ssl_verify_host' => version_compare(PHP_VERSION, '5.6.0', '>=')
+                                 ));
+  }
+
+  /**
+   * @param array $data    Data for POST method
+   * @param string $action HTTP Request Protocol
+   * @return mixed
+   */
+  public function opsRequest($data=array(), $action="get") {
+    $options = array(
+      'header' => array(
+        'Accept'        => 'application/json',
+        'X-API-Key'     =>  $this->authKey
+      )
+    );
+
+    $results = $this->Http->$action(
+      $this->baseUrl . $this->pathURL,
+      ($action == 'get' ? $data : json_encode($data)),
+      $options);
+
+    if($results->code != 200) {
+      // This is probably an RDF blob, which is slightly annoying to parse.
+      // Rather than do it properly since we don't parse RDF anywhere else,
+      // we return a generic error.
+      throw new RuntimeException(_txt('er.vo_members.http.failed', array($results->code)));
+    }
+
+    return json_decode($results->body, true);
+  }
+
+
+  /**
+   * Parse the data into what my database expects to save
+   *
+   * @param $data     JSON Decoded data
+   * @return array    Create list of values ready for saveMany method
+   */
+  public function parseOpsResponse($data) {
+      if(empty($data)) {
+        return array();
+      }
+
+      $values = array();
+      foreach ($data as $idx => $items) {
+        foreach ($items['row'] as $item) {
+          $column = key($item);
+          if($column == 'fqans') {
+            $values[$idx][ $this->mapper[$column] ] = serialize(json_encode($item[$column][0])) ?? '';
+          } else {
+            $values[$idx][ $this->mapper[$column] ] = $item[$column][0] ?? '';
+          }
+        }
+      }
+
+      return $values;
+  }
+
+  /**
+   * Update the table with the existing data
+   *
+   * @param array $data
+   * @return void
+   */
+  public function processData($data) {
+    if(empty($data)) {
+      return;
+    }
+
+
+//    // The users view is no longer required.
+    // XXX Each time i pull the data from the operations portal all of them will be udpated because
+    //     at least the column last_updated will have a new value. Perhaps the best approach is to
+    // Create temp table does not inherit indexes and still we need to copy. Perhaps the best approach is
+    // to clone the table, delete the old one and then rename the temp table
+    $db = ConnectionManager::getDataSource('default');
+
+    if(isset($db->config['prefix'])) {
+      $prefix = $db->config['prefix'];
+    }
+
+    // Create table as cm_voms_members only schema
+    $table = ($prefix ?? '') . Inflector::tableize($this->name);
+    try {
+      $this->VomsMemberClone = ClassRegistry::init('VoMember.VomsMemberClone');
+      $this->VomsMemberClone->tblCreate($table);
+      // save the data
+      $this->VomsMemberClone->importData($data);
+
+      $db->begin();
+      // Drop the current table
+      $this->query('DROP TABLE IF EXISTS ' . $table . ' CASCADE');
+      // Rename the tmp table
+      $this->VomsMemberClone->tableRename($table);
+    }
+    catch(Exception $e) {
+      $err = filter_var($e->getMessage(),FILTER_SANITIZE_SPECIAL_CHARS);
+      $this->log(__METHOD__ . "::error message => " . $err, LOG_DEBUG);
+      $db->rollback();
+      return;
+    }
+
+    $db->cacheSources = true;
+    $db->commit();
+  }
+
 }
