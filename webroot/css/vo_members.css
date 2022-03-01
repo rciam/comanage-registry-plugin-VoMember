@@ -134,8 +134,6 @@
   color: #333;
 }
 
-
-
 #voms-name-header{
   background: #186696;
   padding-left: 0.5em;
@@ -180,6 +178,37 @@
 }
 mark {
   background: #f5f5bb;
+}
+
+/*Lightbox - Magnific Pop up*/
+/* content at start */
+.mfp-content {
+  background-color: white;
+  width: auto !important;
+}
+.mfp-content .pageTitle {
+  float: unset;
+  text-align: center;
+}
+.mfp-content #lightboxContent {
+  margin: 3em 4em;
+}
+.mfp-content #lightboxContent h1 {
+  font-size: 1.4em;
+}
+.mfp-content #lightboxContent h2 {
+  font-size: 1.2em;
+  margin-bottom: 1.5em;
+}
+.mfp-content #lightboxContent table {
+  margin-top: 1em;
+}
+.mfp-content #lightboxContent .field-info {
+  overflow-wrap: anywhere !important;
+}
+.mfp-content .fieldGroupNameCl {
+  display: flex;
+  align-items: center;
 }
 
 @media only screen and (min-width: 360px) {

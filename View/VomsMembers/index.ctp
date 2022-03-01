@@ -121,6 +121,47 @@
     });
 
     $("#clearSearchButton").button();
+
+    $('a.info-modal').magnificPopup({
+      type:'ajax',
+      preloader: true,
+      showCloseBtn: true,
+      enableEscapeKey: true,
+      closeOnBgClick: false,
+      tLoading: '',
+      callbacks: {
+        open: function() {
+          // Will fire when this exact popup is opened
+          // this - is Magnific Popup object
+          displaySpinner();
+        },
+        close: function() {
+        },
+        updateStatus: function(data) {
+          // console.log('Status changed', data);
+          // "data" is an object that has two properties:
+          // "data.status" - current status type, can be "loading", "error", "ready"
+          // "data.text" - text that will be displayed (e.g. "Loading...")
+          // you may modify this properties to change current status or its text dynamically
+          if(data.status !== 'loading') {
+            stopSpinner();
+          }
+          if(data.status == 'error') {
+            // discard and show noty
+            this.close();
+            generateFlash(data.text, data.status);
+          }
+        }
+      },
+      ajax: {
+        settings: {
+          cache: false
+        },
+        tError: 'Permission Denied' //  Error message, can contain %curr% and %total% tags if gallery is enabled
+        // tError: '<a href="%url%">View</a> load failed.' //  Error message, can contain %curr% and %total% tags if gallery is enabled
+      }
+    });
+
   });
 
   function toggleVomsList(state) {
@@ -136,9 +177,11 @@
 
 <?php
 // Load CSS and JS Libraries
-print $this->Html->css('/VoMember/css/vo_members', array('inline' => false));
+print $this->Html->css('VoMember.vo_members', array('inline' => false));
+print $this->Html->css('jquery/magnificpopup/magnific-popup', array('inline' => false));
 // Highlight library
 print $this->Html->script('https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.0/jquery.mark.js', array('inline' => false));
+print $this->Html->script('jquery/magnificpopup/jquery.magnific-popup.min.js', array('inline' => false));
 
 // Construct and load Page title
 $title = ($vv_all) ? _txt('ct.vo_members_all.pl') : _txt('ct.vo_members_my.pl');
@@ -161,6 +204,7 @@ $params['topLinks'] = array();
       print $this->Html->link(
         ($vv_all) ? _txt('ct.vo_members_my.pl') : _txt('ct.vo_members_all.pl'),
         array(
+          'plugin' => 'vo_member',
           'controller' => 'voms_members',
           'action' => 'index',
           'co' => $this->params['named']['co'],
@@ -266,7 +310,27 @@ if($vv_permissions['search']) {
             print '<div class = "roleinfo">';
             print '<div class = "roletitle">';
             // Subject
-            print _txt('pl.vo_members.subjectdn', array($cert['subject']));
+            $linkparams = array(
+              'escape' => false,
+              'class' => 'info-modal'
+            );
+
+            $linktarget = array(
+              'plugin'     => 'vo_member',
+              'controller' => 'voms_members',
+              'action'     => 'info',
+              'subject'    => urlencode($cert['subject']),
+              'void'       => urlencode($vo_name),
+              'co'         => $this->params['named']['co']
+            );
+
+            $elem_id = md5( $cert['subject'] . '-' . ($cert['issuer'] ?? '') );
+
+            print $this->Html->link(
+              _txt('pl.vo_members.subjectdn', array($cert['subject']))
+              . '&nbsp;<i class="material-icons">open_in_new</i>', // todo: Add icon for more info
+              $linktarget,
+              $linkparams);
             // Issuer
             if(!empty($cert['issuer'])) {
               print '<span class="roleTitleText" style="display:block;">';
