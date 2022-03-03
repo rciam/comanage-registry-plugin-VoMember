@@ -114,6 +114,7 @@ class VomsMemberClone extends AppModel
       $table = Inflector::tableize($this->name);
       $table_with_prefix = ($prefix ?? '') . $table;
 
+      $this->query('DROP TABLE IF EXISTS ' . $table_with_prefix);
       $this->query('create table ' . $table_with_prefix . ' ( like ' . $from_table . ' including defaults including constraints including indexes)');
       $this->query('CREATE SEQUENCE IF NOT EXISTS ' . $table_with_prefix . '_id_seq');
       $this->query('ALTER SEQUENCE ' . $table_with_prefix . '_id_seq OWNED BY ' . $table_with_prefix . '.id');

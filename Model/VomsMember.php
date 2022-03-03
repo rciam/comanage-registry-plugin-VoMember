@@ -194,6 +194,32 @@ class VomsMember extends AppModel {
   }
 
   /**
+   * @param $subject
+   * @param $void
+   * @return array|int
+   */
+  public function getVomsEntryBySubject($subject, $void) {
+    $args = array();
+    $args['conditions']['VomsMember.vo_id'] = $void;
+    $args['conditions']['VomsMember.subject'] = $subject;
+    $args['fields'] = array(
+      'VomsMember.subject',
+      'VomsMember.issuer',
+      'VomsMember.vo_id',
+      'VomsMember.username',
+      'VomsMember.email',
+      'VomsMember.first_update',
+      'VomsMember.last_update',
+      'VomsMember.fqans',
+    );
+    $args['contain'] = false;
+
+    $entries = $this->find('all', $args);
+
+    return (empty($entries)) ? array() : $entries;
+  }
+
+  /**
    * Obtain all COUs within a specified CO.
    *
    * @param  integer CO ID

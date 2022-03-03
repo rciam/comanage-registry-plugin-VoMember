@@ -93,6 +93,38 @@ class VomsMembersController extends StandardController {
   }
 
   /**
+   * @return void
+   */
+  public function info() {
+    if(!$this->request->is('ajax')) {
+      $this->Api->restResultHeader(404, "Unsupported");
+      // We force an exit here to prevent any views from rendering, but also
+      // to prevent Cake from dumping the default layout
+      $this->response->send();
+      exit;
+    }
+
+    if(empty($this->params['named']['subject'])
+       || empty($this->params['named']['void'])) {
+      $this->Api->restResultHeader(403, "Missing valid parameters");
+      // We force an exit here to prevent any views from rendering, but also
+      // to prevent Cake from dumping the default layout
+      $this->response->send();
+      exit;
+    }
+
+
+    // Get VO Member Info filtered by the Subject DN
+    $subject = urldecode($this->params['named']['subject']);
+    $vo_id = urldecode($this->params['named']['void']);
+    $vo_members = $this->VomsMember->getVomsEntryBySubject($subject, $vo_id);
+
+    $this->set('vv_vo_members', ($vo_members ?? []) );
+    $this->set('title_for_layout', _txt('ct.vo_members.1'));
+    $this->layout = 'voPersonInfo';
+
+  }
+  /**
    * Insert search parameters into URL for index.
    * - postcondition: Redirect generated
    *
@@ -228,6 +260,7 @@ class VomsMembersController extends StandardController {
     // Determine what operations this user can perform
     $p['index'] = ($roles['cmadmin'] || $roles['coadmin'] || $roles['couadmin'] || $roles['user']);
     $p['search'] = ($roles['cmadmin'] || $roles['coadmin'] || $roles['couadmin'] || $roles['user']);
+    $p['info'] = ($roles['cmadmin'] || $roles['coadmin'] || $roles['couadmin'] || $roles['user']);
     $p['all'] = ($roles['cmadmin'] || $roles['coadmin']);
 
     $this->set('vv_permissions', $p);
