@@ -52,7 +52,7 @@ $cm_vo_member_texts['en_US'] = array(
   'pl.vo_members.isdn'                  => 'Issuer DN',
   'pl.vo_members.inregistry'            => 'In Registry',
   'pl.vo_members.vo_id'                 => 'VO Name',
-  'pl.vo_members.username'              => 'Username',
+  'pl.vo_members.username'              => 'Name',
   'pl.vo_members.email'                 => 'Email',
   'pl.vo_members.first_update'          => 'Creation Date',
   'pl.vo_members.last_update'           => 'Last Modified',
@@ -72,7 +72,7 @@ $cm_vo_member_texts['en_US'] = array(
   'sh.vo_members.subjectdn'             => 'Subject DN',
   'sh.vo_members.issuerdn'              => 'Issuer DN',
   'sh.vo_members.email'                 => 'Email',
-  'sh.vo_members.username'              => 'Username',
+  'sh.vo_members.username'              => 'Name',
   'sh.vo_members.all'                   => 'ALL',
 
   // Shell Text
