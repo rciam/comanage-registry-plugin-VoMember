@@ -104,7 +104,8 @@ class VomsMembersController extends StandardController {
       exit;
     }
 
-    if(empty($this->params['named']['subject'])
+    if(!isset($this->params['named']['subject'])
+       || !isset($this->params['named']['issuer'])
        || empty($this->params['named']['void'])) {
       $this->Api->restResultHeader(403, "Missing valid parameters");
       // We force an exit here to prevent any views from rendering, but also
@@ -116,8 +117,9 @@ class VomsMembersController extends StandardController {
 
     // Get VO Member Info filtered by the Subject DN
     $subject = urldecode($this->params['named']['subject']);
+    $issuer = urldecode($this->params['named']['issuer']);
     $vo_id = urldecode($this->params['named']['void']);
-    $vo_members = $this->VomsMember->getVomsEntryBySubject($subject, $vo_id);
+    $vo_members = $this->VomsMember->getVomsEntryBySubject($subject, $vo_id, $issuer);
 
     $this->set('vv_vo_members', ($vo_members ?? []) );
     $this->set('title_for_layout', _txt('ct.vo_members.1'));

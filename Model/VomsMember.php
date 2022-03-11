@@ -195,12 +195,14 @@ class VomsMember extends AppModel {
 
   /**
    * @param $subject
+   * @param $issuer
    * @param $void
    * @return array|int
    */
-  public function getVomsEntryBySubject($subject, $void) {
+  public function getVomsEntryBySubject($subject, $void, $issuer) {
     $args = array();
     $args['conditions']['VomsMember.vo_id'] = $void;
+    $args['conditions']['VomsMember.issuer'] = $issuer;
     $args['conditions']['VomsMember.subject'] = $subject;
     $args['fields'] = array(
       'VomsMember.subject',

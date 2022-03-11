@@ -203,6 +203,11 @@ mark {
 .mfp-content #lightboxContent table {
   margin-top: 1em;
 }
+.voms_members #lightboxContent ul.form-list li {
+  display: flex;
+  justify-content: space-between;
+  min-width: 30rem;
+}
 .mfp-content #lightboxContent .field-info {
   overflow-wrap: anywhere !important;
 }
