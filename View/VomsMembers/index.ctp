@@ -320,6 +320,7 @@ if($vv_permissions['search']) {
               'controller' => 'voms_members',
               'action'     => 'info',
               'subject'    => urlencode($cert['subject']),
+              'issuer'     => urlencode($cert['issuer']),
               'void'       => urlencode($vo_name),
               'co'         => $this->params['named']['co']
             );
