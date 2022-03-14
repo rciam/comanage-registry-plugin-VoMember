@@ -47,15 +47,43 @@ $cm_vo_member_texts['en_US'] = array(
   'pl.vo_members.cert.pl'               => 'Certificates',
   'pl.vo_members.cert.abbreviation'     => 'Cert',
   'pl.vo_members.subjectdn'             => '<b>Subject DN:</b> %1$s',
+  'pl.vo_members.subdn'                 => 'Subject DN',
   'pl.vo_members.issuerdn'              => '<b>Issuer DN:</b> %1$s',
+  'pl.vo_members.isdn'                  => 'Issuer DN',
   'pl.vo_members.inregistry'            => 'In Registry',
+  'pl.vo_members.vo_id'                 => 'VO Name',
+  'pl.vo_members.username'              => 'Name',
+  'pl.vo_members.email'                 => 'Email',
+  'pl.vo_members.first_update'          => 'Creation Date',
+  'pl.vo_members.last_update'           => 'Last Modified',
+  'pl.vo_members.fqan'                  => 'Fully Qualified Attribute Name #%1$s',
+
+  // Configuration View
+  'pl.vo_members.ops'                    => 'Operations Portal',
+  'pl.vo_members.place.holder'           => 'Placeholder',
+  'pl.vo_members.base.url'               => 'Base URL',
+  'pl.vo_members.base.url.desc'          => 'Base Url including http(s):// protocol prefix',
+  'pl.vo_members.endpoint'               => 'API endpoint',
+  'pl.vo_members.endpoint.ops.desc'      => 'API endpoint for Operations Portal',
+  'pl.vo_members.authkey'                => 'Authorization Key',
 
   // Search Texts
   'sh.vo_members.vo_id'                 => 'VO Name',
   'sh.vo_members.subjectdn'             => 'Subject DN',
   'sh.vo_members.issuerdn'              => 'Issuer DN',
+  'sh.vo_members.email'                 => 'Email',
+  'sh.vo_members.username'              => 'Name',
   'sh.vo_members.all'                   => 'ALL',
+
+  // Shell Text
+  'sh.sync.no.config'                   => 'VoMember is not configured',
+  'sh.sync.arg.coid'                    => 'Numeric CO ID to run tasks for (all COs if not specified)',
 
   // Error
   'er.vo_members.blackhauled'           => 'Session had expired',
+  'er.vo_members.db.failed'             => 'Database Save failed',
+  'er.vo_members.notfound'              => '%1$s Not Found',
+  'er.vo_members.http.failed'           => 'Request Failed',
+  'er.vo_members.schema'                => 'Read Schema Failed',
+  'er.vo_members.no.subject'            => '-No Subject DN is available-'
 );

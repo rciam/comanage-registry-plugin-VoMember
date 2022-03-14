@@ -29,14 +29,34 @@
   must be specified in raw SQL, which needs the prefixed table name.
 -->
 <schema version="0.3">
+  <table name="vo_members">
+    <field name="id" type="I">
+      <key />
+      <autoincrement />
+    </field>
+    <field name="co_id" type="I">
+      <constraint>REFERENCES cm_cos(id)</constraint>
+    </field>
+    <field name="base_url" type="C" size="512" />
+    <field name="location" type="C" size="512" />
+    <field name="authkey" type="C" size="256" />
+    <field name="created" type="T" />
+    <field name="modified" type="T" />
+  </table>
+  
   <table name="voms_members">
     <field name="id" type="I">
       <key />
       <autoincrement />
     </field>
+    <field name="username" type="C" size="512" />
+    <field name="email" type="C" size="512" />
     <field name="subject" type="C" size="512" />
     <field name="issuer" type="C" size="512" />
     <field name="vo_id" type="C" size="256" />
+    <field name="fqans" type="T" />
+    <field name="first_upate" type="T" />
+    <field name="last_update" type="T" />
     <index name="voms_members_i1">
       <col>subject</col>
     </index>
@@ -51,6 +71,9 @@
       <col>issuer</col>
       <col>subject</col>
       <unique />
+    </index>
+    <index name="voms_members_i5">
+      <col>email</col>
     </index>
   </table>
 </schema>
